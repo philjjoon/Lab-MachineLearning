@@ -100,7 +100,8 @@ def lle_test():
     X = np.dot(randrot(10),X);
     
 
-    for (n_rule, param) in [  ['knn',30],['eps-ball',5],['eps-ball',0.5] ]:
+    #for (n_rule, param) in [  ['knn',30],['eps-ball',5],['eps-ball',0.5] ]:
+    for (n_rule, param) in [  ['knn',30]]:
         try:
             Xp = imp.lle(X, 2, n_rule, param);
         except Exception as inst:
@@ -113,7 +114,7 @@ def lle_test():
         pl.title('True 2D manifold')
         pl.ylabel('x_2')
         pl.xticks([],[]); pl.yticks([],[])
-    
+        
         pl.subplot(1,3,2);
         pl.scatter(Xp[0,:], Xp[1,:], 30, Xt[0,:]);
         pl.title(n_rule +': embedding colored via x_1');

@@ -60,6 +60,17 @@ def gammaidx(X, k):
     return y
 
 def distmat(M, X):
+    ''' calculates a distance matrix between M and X
+        
+    Usage:
+        D = distmat( M, X )
+    Parameters:
+        M: (d x k) array of column vectors
+        X: (d x n) array of column vectors
+    Returns:
+        D: (k x n) array of distances between the vectors in M and X
+    '''
+    
     M2 = np.sum(M**2, axis=0)[:, np.newaxis]
     MX = np.dot(M.T, X)
     X2 = np.sum(X**2, axis=0)[np.newaxis, :]

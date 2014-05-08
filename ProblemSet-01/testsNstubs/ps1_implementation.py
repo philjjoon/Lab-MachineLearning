@@ -102,12 +102,14 @@ def lle(X, m, n_rule, param, tol=1e-3):
     if n_rule == 'knn':
         
         # Sort and get the k-nearest neighbours for each data point
-        neighbours = np.argsort(DM, axis=0)[:param, :] 
+        neighbours = np.argsort(DM, axis=0)[:param, :]
 
     elif n_rule == 'eps-ball':
         
-        print 'eps-ball'
-
+        neighbours = []
+        for i in range(n):
+            inds = np.where(DM[:, i] <= param)[0]
+            neighbours.append(inds)
 
     else:
         print 'Rule is unknown. Please choose either knn or eps-ball'
@@ -117,35 +119,39 @@ def lle(X, m, n_rule, param, tol=1e-3):
     
     if param <= d:
         tol = 0
-        
     
-    W = np.zeros([param, n], dtype=float)                       # Matrix W to store the weights
+    W = np.zeros([n, n], dtype=float)                       # Matrix W to store the weights
     for i in range(n):
-        Z = X[:, neighbours[:, i]] - X[:, i][:, np.newaxis]     # Create matrix Z consisting of all neighbours of Xi  
-        C = np.dot(Z.T, Z)                                      # Compute local covariance        
-        C = C + (np.eye(param, param) * tol * np.trace(C))      # Regularization if param > d
-        W[:, i] = (la.solve(C, np.ones([param, 1]))).T          # Solve C * Wi = 1
-        W[:, i] = W[:, i] / np.sum(W[:, i])                     # Enforce sum(Wi) = 1
-        
+        if n_rule == 'knn':
+            neighbour = neighbours[:, i]
+        elif n_rule == 'eps-ball':
+            neighbour = neighbours[i]
 
+        Z = X[:, neighbour] - X[:, i][:, np.newaxis]        # Create matrix Z consisting of all neighbours of Xi  
+        C = np.dot(Z.T, Z)                                  # Compute local covariance        
+        C = C + (np.eye(len(neighbour), len(neighbour)) * tol * np.trace(C))      # Regularization if param > d
+        W[neighbour, i] = la.solve(C, np.ones(len(neighbour)))          # Solve C * Wi = 1
+        W[neighbour, i] = W[neighbour, i] / np.sum(W[:, i])                     # Enforce sum(Wi) = 1
+        
     # Step 3: compute embedding
     print 'Step 3: compute embedding'
     M = np.eye(n, n, dtype=float)
     for i in range(n):
-        w = W[:, i]
-        j = neighbours[:, i]
+        if n_rule == 'knn':
+            j = neighbours[:, i]
+        elif n_rule == 'eps-ball':
+            j = neighbours[i]
 
+        w = W[j, i]
         M[i, j] -= w
         M[j, i] -= w
         w = w[:, np.newaxis]
         M[np.ix_(j, j)] += np.dot(w, w.T)
 
-
     E, V = la.eig(M)
     inds = np.argsort(E)
     E = E[inds]
     V = V[:, inds]
-
     Y = V[:, 1:(m+1)].T * np.sqrt(n)
 
     return Y

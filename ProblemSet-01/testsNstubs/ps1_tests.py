@@ -100,8 +100,8 @@ def lle_test():
     X = np.dot(randrot(10),X);
     
 
-    #for (n_rule, param) in [  ['knn',30],['eps-ball',5],['eps-ball',0.5] ]:
-    for (n_rule, param) in [  ['knn',30]]:
+    for (n_rule, param) in [  ['knn',30],['eps-ball',5],['eps-ball',0.5] ]:
+    #for (n_rule, param) in [  ['knn',30]]:
         try:
             Xp = imp.lle(X, 2, n_rule, param);
         except Exception as inst:

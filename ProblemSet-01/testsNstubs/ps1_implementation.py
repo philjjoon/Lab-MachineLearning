@@ -38,7 +38,7 @@ def pca(X, m):
     # Calculate the covariance matrix
     S = np.cov(X_zero_mean)
     
-    # Calculate the eigenvectors and eigenvalues
+    # Calculate the eigenvalues and eigenvectors
     D, U = la.eigh(S)
    
     # Sort the eigenvalues and eigenvectors
@@ -193,10 +193,10 @@ def lle(X, m, n_rule, param, tol=1e-3):
         w = w[:, np.newaxis]
         M[np.ix_(j, j)] += np.dot(w, w.T)
 
-    # Calculate eigenvectors and eigenvalues
+    # Calculate eigenvalues and eigenvectors
     E, V = la.eig(M)
 
-    # Sort the eigenvectors and eigenvalues in ascending order
+    # Sort the eigenvalues and eigenvectors in ascending order
     inds = np.argsort(E)
     E = E[inds]
     V = V[:, inds]
@@ -278,7 +278,7 @@ def vec2im(images, fact=False):
         y = xy / x
 
     images = images.reshape(x, y, n)
-    
+
     return images
 
 def visualize_data(ax, data, subs=(3,4)):

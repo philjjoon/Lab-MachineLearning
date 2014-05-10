@@ -3,50 +3,48 @@ Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
 The top-level auxiliary file: thesis.aux
 The style file: agsm.bst
 Database file #1: input/mybib.bib
-Warning--entry type for "Roweis" isn't style-file defined
---line 19 of file input/mybib.bib
 Warning--I didn't find a database entry for "oberheide:2008:cloudav"
 Warning--I didn't find a database entry for "latexcookbook2007"
 Warning--empty institution in Saul2000
-You've used 3 entries,
+You've used 2 entries,
             2909 wiz_defined-function locations,
-            660 strings with 5201 characters,
-and the built_in function-call counts, 14816 in all, are:
-= -- 2432
-> -- 206
+            654 strings with 5079 characters,
+and the built_in function-call counts, 11495 in all, are:
+= -- 1894
+> -- 159
 < -- 0
-+ -- 1182
-- -- 63
-* -- 1300
-:= -- 2955
-add.period$ -- 3
-call.type$ -- 3
-change.case$ -- 43
-chr.to.int$ -- 3
-cite$ -- 4
-duplicate$ -- 38
-empty$ -- 87
-format.name$ -- 78
-if$ -- 2654
++ -- 930
+- -- 49
+* -- 1021
+:= -- 2272
+add.period$ -- 2
+call.type$ -- 2
+change.case$ -- 29
+chr.to.int$ -- 2
+cite$ -- 3
+duplicate$ -- 27
+empty$ -- 61
+format.name$ -- 58
+if$ -- 2059
 int.to.chr$ -- 5
 int.to.str$ -- 0
 missing$ -- 1
-newline$ -- 13
-num.names$ -- 31
-pop$ -- 16
+newline$ -- 9
+num.names$ -- 21
+pop$ -- 7
 preamble$ -- 1
-purify$ -- 45
+purify$ -- 30
 quote$ -- 0
-skip$ -- 35
+skip$ -- 25
 stack$ -- 0
-substring$ -- 3454
-swap$ -- 4
-text.length$ -- 42
+substring$ -- 2716
+swap$ -- 3
+text.length$ -- 28
 text.prefix$ -- 0
 top$ -- 0
-type$ -- 12
+type$ -- 8
 warning$ -- 1
-while$ -- 65
+while$ -- 44
 width$ -- 0
-write$ -- 40
-(There were 4 warnings)
+write$ -- 28
+(There were 3 warnings)

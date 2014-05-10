@@ -6,11 +6,6 @@ Harmeling, S., Dornhege, G., Tax, D., Meinecke, F. \harvardand\ M\"{u}ller,
   K.-R.  \harvardyearleft 2006\harvardyearright , `From outliers to prototypes:
   Ordering data', {\em Neurocomputing} {\bf 69}(13-15),~1608--1618.
 
-\harvarditem{Roweis \harvardand\ Saul}{2001}{Roweis}
-Roweis, S.~T. \harvardand\ Saul, L.~K.  \harvardyearleft 2001\harvardyearright
-  , `Lle algorithm pseudocode'.
-\newline\harvardurl{http://www.cs.nyu.edu/~roweis/lle/algorithm.html}
-
 \harvarditem{Saul \harvardand\ Roweis}{2000}{Saul2000}
 Saul, L.~K. \harvardand\ Roweis, S.~T.  \harvardyearleft 2000\harvardyearright
   , An introduction to locally linear embedding, Technical report.

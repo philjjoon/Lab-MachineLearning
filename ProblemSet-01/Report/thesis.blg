@@ -1,0 +1,52 @@
+This is BibTeX, Version 0.99d (TeX Live 2012)
+Capacity: max_strings=35307, hash_size=35307, hash_prime=30011
+The top-level auxiliary file: thesis.aux
+The style file: agsm.bst
+Database file #1: input/mybib.bib
+Warning--entry type for "Roweis" isn't style-file defined
+--line 19 of file input/mybib.bib
+Warning--I didn't find a database entry for "oberheide:2008:cloudav"
+Warning--I didn't find a database entry for "latexcookbook2007"
+Warning--empty institution in Saul2000
+You've used 3 entries,
+            2909 wiz_defined-function locations,
+            660 strings with 5201 characters,
+and the built_in function-call counts, 14816 in all, are:
+= -- 2432
+> -- 206
+< -- 0
++ -- 1182
+- -- 63
+* -- 1300
+:= -- 2955
+add.period$ -- 3
+call.type$ -- 3
+change.case$ -- 43
+chr.to.int$ -- 3
+cite$ -- 4
+duplicate$ -- 38
+empty$ -- 87
+format.name$ -- 78
+if$ -- 2654
+int.to.chr$ -- 5
+int.to.str$ -- 0
+missing$ -- 1
+newline$ -- 13
+num.names$ -- 31
+pop$ -- 16
+preamble$ -- 1
+purify$ -- 45
+quote$ -- 0
+skip$ -- 35
+stack$ -- 0
+substring$ -- 3454
+swap$ -- 4
+text.length$ -- 42
+text.prefix$ -- 0
+top$ -- 0
+type$ -- 12
+warning$ -- 1
+while$ -- 65
+width$ -- 0
+write$ -- 40
+(There were 4 warnings)

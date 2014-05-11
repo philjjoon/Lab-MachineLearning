@@ -1,0 +1,90 @@
+\documentclass[12pt,a4paper]{report}
+
+%###################################################################################
+%###################### Document Defintions ########################################
+%###################################################################################
+%aubrey: no real need to change these
+%how to handle spaces
+\sloppy
+\makeindex
+
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath, marvosym} % Mathematik
+\usepackage{harvard} %for harvard style citation, keep this position before url package
+\usepackage{times, url, geometry, amssymb, booktabs}
+\usepackage{hyperref} %Hyperlinks zw. Textstellen
+\usepackage[pdftex]{graphicx} %pdf figures
+\usepackage{subfig} %multi-figures
+\usepackage{listings} %code listings
+\usepackage{multirow} %for multi-row tables
+\usepackage{color} %needed for listings
+
+\definecolor{Grey}{rgb}{0.83,0.83,0.83}
+\definecolor{White}{rgb}{1,1,1}
+
+%depth of section
+\setcounter{secnumdepth}{4}
+%depth of TOC
+\setcounter{tocdepth}{3} 
+%directory for graphics
+\graphicspath{{gfx/}}
+
+%setting for listing
+\lstset{
+	extendedchars=true,
+	basicstyle=\scriptsize\ttfamily,
+	%basicstyle=\tiny\ttfamily,
+	tabsize=2,
+	keywordstyle=\textbf,
+	commentstyle=\color{grau},
+	stringstyle=\textit,
+	numbers=left,
+	numberstyle=\tiny,
+	% für schönen Zeilenumbruch
+	breakautoindent  = true,
+	breakindent      = 2em,
+	breaklines       = true,
+	postbreak        = ,
+	%prebreak         = \raisebox{-.8ex}[0ex][0ex]{\ensuremath{\lrcorner}},
+	prebreak         = \raisebox{-.8ex}[0ex][0ex]{\Righttorque},
+}
+
+%Table of Content TOC settings
+\setcounter{tocdepth}{3}
+%This is needed for entering URLs for harvard citation style
+\renewcommand{\harvardurl}{URL: \url}
+
+
+%###################################################################################
+%########################### Thesis content ########################################
+%###################################################################################
+\begin{document}
+%__________________________Start_of_Thesis______________________________________________
+%Roman numeral numbering for initial section of thesis
+\pagenumbering{roman}
+%title page specification, deployed as seperate file the input folder
+\input{input/00a_title_page}
+%TOC
+\tableofcontents
+%add list of figures to TOC
+\cleardoublepage
+\addcontentsline{toc}{chapter}{List of Figures}
+\newpage
+\listoffigures
+%__________________________Main_Content______________________________________________
+\newpage
+%from now on, numbering should be arabic
+\pagenumbering{arabic}
+\input{input/01_implementation}
+\input{input/02_application}
+%__________________________End_of_Thesis______________________________________________
+\cleardoublepage
+\addcontentsline{toc}{chapter}{Bibliography}
+%harvard citations style, please uncomment harvard package in the usepackage area
+\bibliographystyle{agsm}
+%remove the following line when using harvard style citation
+%\bibliographystyle{plain}
+%specify bibtex file here
+\bibliography{input/mybib}
+
+\end{document}

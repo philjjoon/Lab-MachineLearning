@@ -96,6 +96,10 @@ def kmeans_agglo(X, r):
     mergeidx: (k-1) x 2 matrix that contains merge idx for each step
     """
 
+    k = len(np.unique(r))
+    print 'r: ', r
+    print 'k: ', k
+
     def kmeans_crit(X, r):
         """ Computes k-means criterion
 

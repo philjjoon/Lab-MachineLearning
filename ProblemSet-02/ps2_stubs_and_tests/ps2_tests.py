@@ -16,6 +16,7 @@ import pylab as pl
 import ps2_implementation as imp
 imp = reload(imp)
 
+
 X = np.array([[0., 1., 1., 10., 10.25, 11., 10., 10.25, 11.],
               [0., 0., 1.,  0.,   0.5,  0.,  5.,   5.5,  5.]])
 perfect_r = [1,0,1,2,2,1,2,2,2]
@@ -90,6 +91,7 @@ def test_agglo():
         return ['test_agglo: the first merge is not correct.']
     else:
         return []
+
 
 if __name__ == '__main__':
     report = test_kmeans() + test_em_gmm() + test_agglo()

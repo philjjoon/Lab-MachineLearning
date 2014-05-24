@@ -71,6 +71,7 @@ def kmeans(X, k, max_iter=100):
         prev_r = r
         i = i + 1 # increase iteration
 
+        #print 'mu: ', mu
     return mu, r
 
 def randomInitCentroids(X, k):
@@ -96,10 +97,6 @@ def kmeans_agglo(X, r):
     mergeidx: (k-1) x 2 matrix that contains merge idx for each step
     """
 
-    k = len(np.unique(r))
-    print 'r: ', r
-    print 'k: ', k
-
     def kmeans_crit(X, r):
         """ Computes k-means criterion
 
@@ -110,11 +107,88 @@ def kmeans_agglo(X, r):
         Output:
         value: scalar for sum of euclidean distances to cluster centers
         """
+        
+        # Calculate mu
+        clusters = np.unique(r)
+        k = len(clusters)
+        r = r[:, np.newaxis]
+        #C = (r == np.arange(k)[np.newaxis, :])
+        C = (r == clusters[np.newaxis, :])
+        mu = np.dot(X, C) / np.sum(C, axis=0)[np.newaxis, :]
+        
+        # Calculate the loss value
+        DM = cdist(mu.T, X.T, 'euclidean') # Compute the distance matrix
+        loss = np.sum((DM * C.T))
 
-        pass
+        return loss
     
-    pass
+    def find_min_merge(X, r):
+        """ Header here
+        """
+        r_list = []
+        loss_values = []
+        mergeidx_list = []
+        clusters = np.unique(r)
+        k = len(np.unique(r))
 
+        for i in range(k-1):
+            for j in range(i+1, k):
+                r_agglo = np.copy(r)
+                r_agglo[np.nonzero(r_agglo==clusters[j])] = clusters[i]
+                loss = kmeans_crit(X, r_agglo)
+                idx = np.array([clusters[i], clusters[j]])
+                r_list.append(r_agglo)
+                loss_values.append(loss)
+                mergeidx_list.append(idx)
+                print
+                print '(' + str(clusters[i]) + ',' + str(clusters[j]) + ')'
+                print 'r_agglo: ', r_agglo
+                print 'loss_agglo: ', loss
+
+        idx_min = np.argmin(np.array(loss_values))
+        min_r = r_list[idx_min]
+        min_loss = loss_values[idx_min]
+        min_mergeidx = mergeidx_list[idx_min]
+
+        return min_r, min_loss, min_mergeidx
+
+    n = X.shape[1]
+    k = len(np.unique(r))
+
+    R = np.zeros([k-1, n])
+    kmloss = np.zeros(k)
+    mergeidx = np.zeros([k-1, 2])
+
+    R[0, :] = r
+    kmloss[0] = kmeans_crit(X, r)
+    new_r = r
+
+    print 'Original: '
+    print '========='
+    print 'r: ', r
+    print 'loss: ', kmeans_crit(X, r)
+
+    for i in range(k-1):
+        print 
+        print 'Merge ' + str(i+1)
+        print '======='
+        min_r, min_loss, min_mergeidx = find_min_merge(X, new_r)
+
+        print
+        print 'Result:'
+        print '-------'
+        print 'min_r: ', min_r
+        print 'min_loss: ', min_loss
+        print 'merge_idx: ', min_mergeidx
+        if(i < k-2):
+            R[i+1, :] = min_r
+
+        mergeidx[i] = min_mergeidx
+        kmloss[i+1] = min_loss
+        
+        new_r = min_r
+
+    return R, kmloss, mergeidx
 
 
 def agglo_dendro(kmloss, mergeidx):

@@ -173,7 +173,7 @@ def kmeans_agglo(X, r):
         print 'Merge ' + str(i+1)
         print '======='
         min_r, min_loss, min_mergeidx = find_min_merge(X, new_r)
-
+        min_r[min_r == min_mergeidx[0]] = k + i
         print
         print 'Result:'
         print '-------'
@@ -199,7 +199,16 @@ def agglo_dendro(kmloss, mergeidx):
     mergeidx: (k-1) x 2 matrix that contains merge idx for each step
     """
 
-    pass
+    X = np.zeros([mergeidx.shape[1], 4])
+    X[:, [0, 1]] = mergeidx
+    X[:, 2] = kmloss[1:]
+    dendrogram(X)
+    plt.xlabel('Cluster index')
+    plt.ylabel('Increase in k-means criterion function')
+    plt.suptitle('Agglomerative Clustering Dendrogram', fontweight='bold', fontsize=14);
+    
+    print X
+
 
 
 def norm_pdf(X, mu, C):

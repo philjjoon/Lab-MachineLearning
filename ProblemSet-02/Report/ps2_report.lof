@@ -1,0 +1,5 @@
+\addvspace {10\p@ }
+\addvspace {10\p@ }
+\contentsline {figure}{\numberline {2.1}{\ignorespaces \textit {5gaussians} data set\relax }}{3}{figure.caption.3}
+\contentsline {figure}{\numberline {2.2}{\ignorespaces Loss values of k-means, run 100 times\relax }}{4}{figure.caption.4}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces k-means clustering with $k=5$, applied to \textit {5gaussians} data set\relax }}{4}{figure.caption.5}

@@ -38,6 +38,7 @@ def kmeans(X, k, max_iter=100):
     mu: (d x k) matrix with each cluster center in one column
     r: assignment vector
     """
+
     d, n = X.shape
     mu = randomInitCentroids(X, k)
     prev_mu = mu
@@ -51,19 +52,17 @@ def kmeans(X, k, max_iter=100):
         DM = cdist(mu.T, X.T, 'euclidean') # Compute the distance matrix
         C = (DM == np.min(DM, axis=0)) # Get the closest members for each cluster
         
+        # Compute the vector of cluster membership
         r = np.dot(np.arange(k), C)
-        
-        L = DM[np.nonzero(C)]
-        
-        loss = np.sum(L) / n
+
+        # Compute the loss value        
+        loss = np.sum(DM[np.nonzero(C)]) / n
         
         # Compute new centroids
         members = np.sum(C, axis=1)[np.newaxis, :]
         mu = np.dot(X, C.T) / members
         
-        #converged = np.all(mu == prev_mu)
-        #converged = np.sum(np.abs(mu_new - mu)) <= 1e-8
-
+        # Compute the number of cluster memberships which changed in the preceding step
         total_changed = np.sum(r != prev_r)
 
         # Print some information after each iteration
@@ -72,17 +71,25 @@ def kmeans(X, k, max_iter=100):
         #print 'Loss: ' + str(loss)
 
         counter = counter + 1 # increase iteration
-        converged = (np.all(mu == prev_mu)) or (counter > max_iter)
-        
+        converged = (np.all(mu == prev_mu) and np.all(r == prev_r)) or (counter > max_iter)
+        #converged = np.sum(np.abs(mu_new - mu)) <= 1e-8
+
         prev_mu  = mu
         prev_r = r
 
-        #print 'mu: ', mu
-    return mu, r
+    return mu, r, loss
 
 def randomInitCentroids(X, k):
-    """ header here
+    """ Get random data points as cluster centers
+
+    Input:
+    X: (d x n) data matrix with each data point in one column
+    k: number of clusters
+
+    Output:
+    mu: (d x k) matrix with random cluster center in each column
     """
+
     d, n = X.shape
     clusters = np.random.choice(n, k, replace=False)
     mu = X[:, clusters]
@@ -114,11 +121,10 @@ def kmeans_agglo(X, r):
         value: scalar for sum of euclidean distances to cluster centers
         """
         
-        # Calculate mu
-        clusters = np.unique(r)
-        k = len(clusters)
+        # Calculate cluster centers of each cluster
+        clusters = np.unique(r) 
+        k = len(clusters) 
         r = r[:, np.newaxis]
-        #C = (r == np.arange(k)[np.newaxis, :])
         C = (r == clusters[np.newaxis, :])
         mu = np.dot(X, C) / np.sum(C, axis=0)[np.newaxis, :]
         
@@ -129,7 +135,16 @@ def kmeans_agglo(X, r):
         return loss
     
     def find_min_merge(X, r):
-        """ Header here
+        """ Computes the indices of the two clusters that were merged at each step
+
+        Input: 
+        X: (d x n) data matrix with each datapoint in one column
+        r: assignment vector
+
+        Output:
+        min_r: new assignment vector after merge two clusters
+        min_loss: loss value of the merge
+        min_mergeidx: indices of the two clusters that were merged
         """
         r_list = []
         loss_values = []
@@ -146,12 +161,12 @@ def kmeans_agglo(X, r):
                 r_list.append(r_agglo)
                 loss_values.append(loss)
                 mergeidx_list.append(idx)
-                print
-                print '(' + str(clusters[i]) + ',' + str(clusters[j]) + ')'
-                print 'r_agglo: ', r_agglo
-                print 'loss_agglo: ', loss
+                #print
+                #print '(' + str(clusters[i]) + ',' + str(clusters[j]) + ')'
+                #print 'r_agglo: ', r_agglo
+                #print 'loss_agglo: ', loss
 
-        idx_min = np.argmin(np.array(loss_values))
+        idx_min = np.argmin(np.array(loss_values)) # Get the smallest loss value after merging two clusters
         min_r = r_list[idx_min]
         min_loss = loss_values[idx_min]
         min_mergeidx = mergeidx_list[idx_min]
@@ -169,23 +184,23 @@ def kmeans_agglo(X, r):
     kmloss[0] = kmeans_crit(X, r)
     new_r = r
 
-    print 'Original: '
-    print '========='
-    print 'r: ', r
-    print 'loss: ', kmeans_crit(X, r)
+    #print 'Original: '
+    #print '========='
+    #print 'r: ', r
+    #print 'loss: ', kmeans_crit(X, r)
 
     for i in range(k-1):
-        print 
-        print 'Merge ' + str(i+1)
-        print '======='
+        #print 
+        #print 'Merge ' + str(i+1)
+        #print '======='
         min_r, min_loss, min_mergeidx = find_min_merge(X, new_r)
         min_r[min_r == min_mergeidx[0]] = k + i
-        print
-        print 'Result:'
-        print '-------'
-        print 'min_r: ', min_r
-        print 'min_loss: ', min_loss
-        print 'merge_idx: ', min_mergeidx
+        #print
+        #print 'Result:'
+        #print '-------'
+        #print 'min_r: ', min_r
+        #print 'min_loss: ', min_loss
+        #print 'merge_idx: ', min_mergeidx
         if(i < k-2):
             R[i+1, :] = min_r
 
@@ -318,10 +333,10 @@ def em_gmm(X, k, max_iter=100, init_kmeans=False, eps=1e-3):
         converged = (np.abs(prev_likelihood - likelihood) < eps) or (counter > max_iter)
         prev_likelihood = likelihood
 
-    return pi, mu, sigma    
+    return pi, mu, sigma, likelihood    
     
 
-def plot_gmm_solution(X, mu, sigma):
+def plot_gmm_solution(X, mu, sigma, ax):
     """ Plots covariance ellipses for GMM
 
     Input:
@@ -331,11 +346,11 @@ def plot_gmm_solution(X, mu, sigma):
     """
     colors = ['red', 'green', 'yellow', 'magenta', 'cyan', 'blue',  \
                 'dimgray', 'orange', 'lightblue', 'lime']
-    fig = plt.figure()
-    ax = fig.add_subplot(111)
+    #fig = plt.figure()
+    #ax = fig.add_subplot(111)
     ax.scatter(X[0, :], X[1, :])
     ax.scatter(mu[0, :], mu[1, :], marker='x', color='red', s=40)
-    
+    #ax.set_title('GMM with ' + str(len(sigma)) + ' clusters')
     for k in range(len(sigma)):
         #U, s , Vh = np.linalg.svd(sigma[k])
         eigVal, eigVec = np.linalg.eig(sigma[k])

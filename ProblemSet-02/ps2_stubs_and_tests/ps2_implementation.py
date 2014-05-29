@@ -22,6 +22,9 @@ from scipy.spatial.distance import cdist  # fast distance matrices
 from scipy.cluster.hierarchy import dendrogram  # you can use this
 import matplotlib.pyplot as plt
 from matplotlib.lines import Line2D  # for when you create your own dendrogram
+from scipy.linalg import solve
+from scipy.stats import multivariate_normal
+from matplotlib.patches import Ellipse
 
 def kmeans(X, k, max_iter=100):
     """ Performs k-means clustering
@@ -35,13 +38,14 @@ def kmeans(X, k, max_iter=100):
     mu: (d x k) matrix with each cluster center in one column
     r: assignment vector
     """
+    d, n = X.shape
     mu = randomInitCentroids(X, k)
     prev_mu = mu
 
-    prev_r = np.zeros(X.shape[1], dtype=int)
+    prev_r = np.zeros(n, dtype=int)
     converged = False
-    i = 1 # First iteration
-    while ((not converged) and (i != (max_iter+1))):
+    counter = 1 # First iteration
+    while (not converged):
         
         # Find closest centroids of each data point
         DM = cdist(mu.T, X.T, 'euclidean') # Compute the distance matrix
@@ -51,25 +55,27 @@ def kmeans(X, k, max_iter=100):
         
         L = DM[np.nonzero(C)]
         
-        loss = np.sum(L)
+        loss = np.sum(L) / n
         
         # Compute new centroids
         members = np.sum(C, axis=1)[np.newaxis, :]
         mu = np.dot(X, C.T) / members
         
-        converged = np.all(mu == prev_mu)
+        #converged = np.all(mu == prev_mu)
         #converged = np.sum(np.abs(mu_new - mu)) <= 1e-8
 
         total_changed = np.sum(r != prev_r)
 
         # Print some information after each iteration
-        print '\nIteration: ' + str(i) + '/' + str(max_iter)
-        print 'The number of cluster memberships which changed: ', total_changed
-        print 'Loss: ' + str(loss)
+        #print '\nIteration: ' + str(counter) + '/' + str(max_iter)
+        #print 'The number of cluster memberships which changed: ', total_changed
+        #print 'Loss: ' + str(loss)
 
+        counter = counter + 1 # increase iteration
+        converged = (np.all(mu == prev_mu)) or (counter > max_iter)
+        
         prev_mu  = mu
         prev_r = r
-        i = i + 1 # increase iteration
 
         #print 'mu: ', mu
     return mu, r
@@ -118,7 +124,7 @@ def kmeans_agglo(X, r):
         
         # Calculate the loss value
         DM = cdist(mu.T, X.T, 'euclidean') # Compute the distance matrix
-        loss = np.sum((DM * C.T))
+        loss = np.sum((DM * C.T)) / n
 
         return loss
     
@@ -223,7 +229,23 @@ def norm_pdf(X, mu, C):
     pdf value for each data point
     """
 
-    pass
+    d = X.shape[0]
+    X_mu = X - mu[:, np.newaxis]
+    det_C = np.linalg.det(C)
+    #print 'det_C: ', det_C
+    #print 
+    if det_C <= 0:
+        n = X.shape[1]
+        pdf = np.zeros(n)
+        for i in range(n):
+            pdf[i] = multivariate_normal.pdf(X[:, i], mu, C)
+            return pdf
+    #C_inv = np.linalg.inv(C)
+
+    tmp1 = np.power((2 * np.pi), -d/2.) * np.power(det_C, -1/2.)
+    tmp2 = np.exp(-1/2. * (np.diag(np.dot(X_mu.T, solve(C, X_mu, sym_pos=True)))))
+
+    return tmp1 * tmp2
 
 
 def em_gmm(X, k, max_iter=100, init_kmeans=False, eps=1e-3):
@@ -242,7 +264,62 @@ def em_gmm(X, k, max_iter=100, init_kmeans=False, eps=1e-3):
     sigma: list of d x d covariance matrices
     """
 
-    pass
+    d, n = X.shape
+    sigma = []
+    if init_kmeans:
+        mu, r = kmeans(X, k)
+        pi = np.ones(k)
+        for idx, cl in enumerate(np.unique(r)):
+            pi[idx] = np.sum(r == cl) / n
+            sigma.append(np.cov(X[:, np.nonzero(r==cl)[0]]))
+
+
+    else:
+        mu = randomInitCentroids(X, k)
+        pi = np.ones(k) / k
+        for i in range(k):
+            sigma.append(np.eye(d))
+
+    prev_likelihood = 0
+    counter = 1
+    converged = False
+    while not converged:
+        ''' The E-Step '''
+        gamma = np.zeros([k, n])
+        for i in range(k):
+            gamma[i, :] = pi[i] * norm_pdf(X, mu[:, i], sigma[i])
+            #gamma[i, :] = pi[i] * multivariate_normal.pdf(X, mu[:, i], sigma[i])
+        #likelihood = np.prod(np.sum(gamma, axis=0))
+        #print gamma
+        likelihood = np.sum(np.log(np.sum(gamma, axis=0)))
+        gamma = gamma / np.sum(gamma, axis=0) # Normalize gamma
+        #print 'gamma.shape: ', gamma.shape
+        #print 'gamma: ', gamma
+        #print 'sum_gamma: ', np.sum(gamma, axis=0)
+        
+        #print 'likelihood: ', likelihood
+        #print 'mu: ', mu
+        #print 'pi: ', pi
+
+        ''' The M-Step '''
+        N = np.sum(gamma, axis=1)
+        pi = N / n
+        mu = np.dot(X, gamma.T) / N[np.newaxis, :]
+
+        for i in range(k):
+            X_zero_mean = X - mu[:, i][:, np.newaxis]
+            C = np.dot((gamma[i, :][np.newaxis, :] * X_zero_mean), X_zero_mean.T) / N[i]
+            sigma[i] = C
+
+        #print '\nIteration: ' + str(counter) + '/' + str(max_iter)
+        #print 'Likelihood: ', likelihood
+
+        counter = counter + 1
+        converged = (np.abs(prev_likelihood - likelihood) < eps) or (counter > max_iter)
+        prev_likelihood = likelihood
+
+    return pi, mu, sigma    
+    
 
 def plot_gmm_solution(X, mu, sigma):
     """ Plots covariance ellipses for GMM
@@ -252,5 +329,26 @@ def plot_gmm_solution(X, mu, sigma):
     mu: (d x k) matrix with each cluster center in one column
     sigma: list of d x d covariance matrices
     """
+    colors = ['red', 'green', 'yellow', 'magenta', 'cyan', 'blue',  \
+                'dimgray', 'orange', 'lightblue', 'lime']
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.scatter(X[0, :], X[1, :])
+    ax.scatter(mu[0, :], mu[1, :], marker='x', color='red', s=40)
+    
+    for k in range(len(sigma)):
+        #U, s , Vh = np.linalg.svd(sigma[k])
+        eigVal, eigVec = np.linalg.eig(sigma[k])
+        #print 'eigVl: ', eigVl
+        #print 'eigVt: ', eigVt
+        #print 'U: ', U
+        #print 'U.shape: ', U.shape
+        #print 's.shape: ', s.shape
+        #print 's: ', s
+        #print 'sigma: ', sigma[k]
+        orient = np.arctan2(eigVec[1,0], eigVec[0,0]) * (180 / np.pi)
+        el = Ellipse(xy=mu[:,k], width=2.0*np.sqrt(eigVal[0]), \
+            height=2.0*np.sqrt(eigVal[1]), angle=orient, \
+            facecolor='none', edgecolor='red')
+        ax.add_patch(el)
 
-    pass

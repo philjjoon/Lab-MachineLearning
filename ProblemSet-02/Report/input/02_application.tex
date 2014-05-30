@@ -8,7 +8,7 @@ In this chapter, the implementations should be applied to three datasets: \texti
 \section{Assignment 6: \textit{5gaussians} Analysis}
 \label{assignment6}
 
-In this assignment, the \textit{5gaussians} data set is analyzed. The data set should be clustered using \textit{k-means} and \textit{GMM} for $k = 2, ..., 10$. Figure~\ref{fig:5gaussians} shows the original \textit{5gaussians} data set.
+In this assignment, the \textit{5gaussians} data set is analyzed. The data set should be clustered using \textit{k-means} and \textit{GMM} for $k = 2, ..., 10$. Figure~\ref{fig:5gaussians} shows the original \textit{5gaussians} data set. Since the data set is constructed with five gaussians, $k=5$ is the best choice for the number of clusters.
 
 \begin{figure}[h!]
 	\centering
@@ -113,7 +113,7 @@ initial guesses can drastically reduce the number of iterations required to obta
 \section{Assignment 7: \textit{2gaussian} Analysis}
 \label{assignment7}
 
-In this assignment the \textit{2gaussians} data set should be analyzed with \textit{k-means} and \textit{GMM}. Figure~\ref{fig:2gaussians} show the original \textit{2gaussians} data set.
+In this assignment the \textit{2gaussians} data set should be analyzed with \textit{k-means} and \textit{GMM}. Figure~\ref{fig:2gaussians} show the original \textit{2gaussians} data set. Since the data set is constructed by two gaussians, $k=2$ is the best choice for the number of clusters.
 
 \begin{figure}[h!]
 	\centering
@@ -122,12 +122,42 @@ In this assignment the \textit{2gaussians} data set should be analyzed with \tex
 	\label{fig:2gaussians}
 \end{figure}
 
+{\raggedright \textbf{Question 7.1: Compare the cluster centers. Which algorithm works better and why?}}\\
+
+\textit{K-means}, \textit{GMM} with random and k-means initialization were used to cluster the \textit{2gaussians} data set. Each method was run 100 times to avoid bad local optima. For \textit{k-means} method, the clustering which gives the lowest loss value was picked, whereas for \textit{GMM}, the clustering which gives the highest log likelihood was picked. Figure~\ref{fig:2gaussians_kmeans} shows the clustering using \textit{k-means}, whereas Figure~\ref{fig:2gaussians_gmm_random} and Figure~\ref{fig:2gaussians_gmm_kmeans} show the clustering using \textit{GMM} with random and k-means initialization.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{2gaussians_kmeans}
+	\caption{k-means clustering with $k=2$, applied to \textit{2gaussians} data set}
+	\label{fig:2gaussians_kmeans}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{2gaussians_gmm_random}
+	\caption{GMM clustering with random initialization, $k=2$, applied to \textit{2gaussians} data set}
+	\label{fig:2gaussians_gmm_random}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{2gaussians_gmm_kmeans}
+	\caption{GMM clustering with k-means initialization, $k=2$, applied to \textit{2gaussians} data set}
+	\label{fig:2gaussians_gmm_kmeans}
+\end{figure}
+
+From the plots, it can be obtained that the \textit{GMM} with random initialization is the best method to cluster the \textit{2gaussians} data set. The \textit{k-means} method did not perform very well, because the objective of \textit{k-means} is to minimize the loss value, which basically depends strongly on the euclidean distances of each data point. But the data set was created using mixture of two gaussians which is separated as upper- and lower part. Therefore two data points can have a small euclidean distance although they are from two different gaussians. 
+
+The \textit{GMM} with random initialization performed very well, because its objective is to maximize the log likelihood, which can be calculated using the gaussian function. Instead of depending on the mean of data points, it uses maximization to find the best clustering. On the other hand, the \textit{GMM} with k-means initialization did not perform very well, because \textit{GMM} depends strongly on the initialization. Since it used the result of k-means to do the initialization, it performed almost in the same way as k-means.
+
+{\raggedright \textbf{Question 7.2: How does the GMM depends on the initialization}}\\
+
+The \textit{GMM} depends strongly on the initialization, as we can see in the Figure~\ref{fig:2gaussians_gmm_random} and Figure~\ref{fig:2gaussians_gmm_kmeans}. Although the \textit{GMM} was applied to the same data set, but its performance was different, depending on the initialization.
 
 %#############################################################################################
 
 \section{Assignment 8: \textit{USPS} Analysis}
 \label{assignment8}
 
-In the last assignment of this problem set, \textit{LLE} has to be applied to noisy \textit{flatroll} data set. Two gaussian noise were added to the data set, with variance 0.2 and 1.8, respectively. After that, both noisy data sets should be unrolled using \textit{knn} with a good value of \textit{k} and a value which is obviously too large. Figure~\ref{fig:llenoisy} depicts the two noisy images and their resulting embedding. It can be obtained that the noisy data set with big variance(1.8) is not very good unrolled.
-
-
+In the last assignment of this problem set, the \textit{k-means} and \textit{GMM} algorithm should be applied to the \textit{USPS} data set with $k=10$.

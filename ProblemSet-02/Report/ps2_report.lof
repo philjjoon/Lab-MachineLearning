@@ -1,13 +1,16 @@
 \addvspace {10\p@ }
 \addvspace {10\p@ }
-\contentsline {figure}{\numberline {2.1}{\ignorespaces \textit {5gaussians} data set\relax }}{3}{figure.caption.3}
+\contentsline {figure}{\numberline {2.1}{\ignorespaces \textit {5gaussians} data set\relax }}{4}{figure.caption.3}
 \contentsline {figure}{\numberline {2.2}{\ignorespaces Loss values of k-means, run 100 times\relax }}{4}{figure.caption.4}
-\contentsline {figure}{\numberline {2.3}{\ignorespaces k-means clustering with $k=5$, applied to \textit {5gaussians} data set\relax }}{4}{figure.caption.5}
+\contentsline {figure}{\numberline {2.3}{\ignorespaces k-means clustering with $k=5$, applied to \textit {5gaussians} data set\relax }}{5}{figure.caption.5}
 \contentsline {figure}{\numberline {2.4}{\ignorespaces Log likelihood of GMM with random initialization, run 100 times\relax }}{5}{figure.caption.6}
-\contentsline {figure}{\numberline {2.5}{\ignorespaces GMM clustering with random initialization, $k=5$, applied to \textit {5gaussians} data set\relax }}{5}{figure.caption.7}
+\contentsline {figure}{\numberline {2.5}{\ignorespaces GMM clustering with random initialization, $k=5$, applied to \textit {5gaussians} data set\relax }}{6}{figure.caption.7}
 \contentsline {figure}{\numberline {2.6}{\ignorespaces Log likelihood of GMM with k-means initialization, run 100 times\relax }}{6}{figure.caption.8}
-\contentsline {figure}{\numberline {2.7}{\ignorespaces GMM clustering with k-means initialization, $k=5$, applied to \textit {5gaussians} data set\relax }}{6}{figure.caption.9}
+\contentsline {figure}{\numberline {2.7}{\ignorespaces GMM clustering with k-means initialization, $k=5$, applied to \textit {5gaussians} data set\relax }}{7}{figure.caption.9}
 \contentsline {figure}{\numberline {2.8}{\ignorespaces Number of iterations of \textit {GMM} ($k=5$) with random and k-means initialization, run 100 times\relax }}{7}{figure.caption.10}
 \contentsline {figure}{\numberline {2.9}{\ignorespaces Maximum log likelihoods of \textit {GMM} ($k=5$) with random and k-means initialization, run 100 times\relax }}{8}{figure.caption.11}
 \contentsline {figure}{\numberline {2.10}{\ignorespaces Dendogramm plot of the hierarchical clustering with initial clustering $k=50$\relax }}{8}{figure.caption.12}
 \contentsline {figure}{\numberline {2.11}{\ignorespaces \textit {2gaussians} data set\relax }}{9}{figure.caption.13}
+\contentsline {figure}{\numberline {2.12}{\ignorespaces k-means clustering with $k=2$, applied to \textit {2gaussians} data set\relax }}{9}{figure.caption.14}
+\contentsline {figure}{\numberline {2.13}{\ignorespaces GMM clustering with random initialization, $k=2$, applied to \textit {2gaussians} data set\relax }}{10}{figure.caption.15}
+\contentsline {figure}{\numberline {2.14}{\ignorespaces GMM clustering with k-means initialization, $k=2$, applied to \textit {2gaussians} data set\relax }}{10}{figure.caption.16}

@@ -212,7 +212,7 @@ def kmeans_agglo(X, r):
     return R, kmloss, mergeidx
 
 
-def agglo_dendro(kmloss, mergeidx):
+def agglo_dendro(kmloss, mergeidx, ax):
     """ Plots dendrogram for agglomerative clustering
 
     Input:
@@ -220,15 +220,17 @@ def agglo_dendro(kmloss, mergeidx):
     mergeidx: (k-1) x 2 matrix that contains merge idx for each step
     """
 
-    X = np.zeros([mergeidx.shape[1], 4])
+    X = np.zeros([mergeidx.shape[0], 4])
     X[:, [0, 1]] = mergeidx
     X[:, 2] = kmloss[1:]
+    #fig = plt.figure()
+    #ax = fig.add_subplot(111)
+    ax.set_xlabel('Cluster index')
+    ax.set_ylabel('Loss values of k-means criterion function')
+    ax.set_title('Agglomerative Clustering Dendrogram', fontweight='bold', fontsize=14);
     dendrogram(X)
-    plt.xlabel('Cluster index')
-    plt.ylabel('Increase in k-means criterion function')
-    plt.suptitle('Agglomerative Clustering Dendrogram', fontweight='bold', fontsize=14);
     
-    print X
+    #print X
 
 
 
@@ -282,12 +284,11 @@ def em_gmm(X, k, max_iter=100, init_kmeans=False, eps=1e-3):
     d, n = X.shape
     sigma = []
     if init_kmeans:
-        mu, r = kmeans(X, k)
+        mu, r, loss = kmeans(X, k)
         pi = np.ones(k)
         for idx, cl in enumerate(np.unique(r)):
             pi[idx] = np.sum(r == cl) / n
             sigma.append(np.cov(X[:, np.nonzero(r==cl)[0]]))
-
 
     else:
         mu = randomInitCentroids(X, k)
@@ -333,7 +334,7 @@ def em_gmm(X, k, max_iter=100, init_kmeans=False, eps=1e-3):
         converged = (np.abs(prev_likelihood - likelihood) < eps) or (counter > max_iter)
         prev_likelihood = likelihood
 
-    return pi, mu, sigma, likelihood    
+    return pi, mu, sigma, likelihood, counter
     
 
 def plot_gmm_solution(X, mu, sigma, ax):

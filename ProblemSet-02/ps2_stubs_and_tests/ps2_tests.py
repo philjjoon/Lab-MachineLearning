@@ -79,10 +79,11 @@ def test_em_gmm():
 def test_agglo():
     worked = False
     for _ in range(10):
-        mu, r = imp.kmeans(X, k=3)
+        mu, r, loss = imp.kmeans(X, k=3)
         r = r.flatten()
         R, kmloss, mergeidx = imp.kmeans_agglo(X, r)
         mergeidx = np.array(mergeidx, dtype=int)
+
         if set([int(r[3]), int(r[6])]) == set(mergeidx[0, :]):
             worked = True
             imp.agglo_dendro(kmloss, mergeidx)

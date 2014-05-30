@@ -17,8 +17,8 @@ In this assignment, the \textit{5gaussians} data set is analyzed. The data set s
 	\label{fig:5gaussians}
 \end{figure}
 
-{\raggedright \textbf{Question 6.1: Do both methods find the 5 clusters reliably?} \\
-\textit{K-means} finds the 5 clusters reliably. Since \textit{k-means} can have different result depending on the initialization, it is run 100 times. The loss value from each run is calculated, as depicted in Figure~\ref{fig:lossvalues_kmeans}. The clustering which gives the lowest loss value is then picked and visualized in Figure~\ref{fig:5gaussians_kmeans}.
+{\raggedright \textbf{Question 6.1: Do both methods find the five clusters reliably?}} \\
+\textit{K-means} finds the five clusters reliably. Since \textit{k-means} can have different result depending on the initialization, it was run 100 times. The loss value from each run was calculated, as depicted in Figure~\ref{fig:lossvalues_kmeans}. The clustering which gives the lowest loss value was then picked and visualized in Figure~\ref{fig:5gaussians_kmeans}.
 
 \begin{figure}[h!]
 	\centering
@@ -34,43 +34,93 @@ In this assignment, the \textit{5gaussians} data set is analyzed. The data set s
 	\label{fig:5gaussians_kmeans}
 \end{figure}
 
+\textit{GMM} with random initialization also finds the five clusters reliably. The same method as \textit{k-means} was applied to \textit{GMM}. It was also run 100 times, but instead of loss value, the log likelihood of each run was calculated, as shown in Figure~\ref{fig:likelihoods_gmm_random}. The clustering which gives the highest log likelihood was then picked and visualized in Figure~\ref{fig:5gaussians_gmm_random}.
 
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{likelihoods_gmm_random}
+	\caption{Log likelihood of GMM with random initialization, run 100 times}
+	\label{fig:likelihoods_gmm_random}
+\end{figure}
 
-{\raggedright \textbf{Question 6.2: What role does the initialisation of the GMM with a k-means solution play in the number of necessary iterations and the quality of the solution?}}\\
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{5gaussians_gmm_random}
+	\caption{GMM clustering with random initialization, $k=5$, applied to \textit{5gaussians} data set}
+	\label{fig:5gaussians_gmm_random}
+\end{figure}
+
+Finally, \textit{GMM} with \textit{k-means} initialization was utilized. It also finds the five clusters reliably. It was also run 100 times and the log likelihood of each run was calculated. Figure~\ref{fig:likelihoods_gmm_kmeans} and Figure~\ref{fig:5gaussians_gmm_kmeans} depict the log likelihood of each run and the clustering which gives the highest log likelihood, respectively.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{likelihoods_gmm_kmeans}
+	\caption{Log likelihood of GMM with k-means initialization, run 100 times}
+	\label{fig:likelihoods_gmm_kmeans}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{5gaussians_gmm_kmeans}
+	\caption{GMM clustering with k-means initialization, $k=5$, applied to \textit{5gaussians} data set}
+	\label{fig:5gaussians_gmm_kmeans}
+\end{figure}
+
+As we have seen above, the three methods can find the five clusters reliably, because the \textit{5gaussians} data set is a well-separated data set.
+
+%\newpage
+\pagebreak[4]
+{\raggedright \textbf{Question 6.2: What role does the initialization of the GMM with a k-means solution play in the number of necessary iterations and the quality of the solution?}}\\
+
+The initialization of the \textit{GMM} with a \textit{k-means} solution plays a significant role in the number of necessary iterations until the convergence is reached. \textit{GMM} depends strongly on the initialization. With \textit{k-means} initialization, the \textit{GMM} converged more quickly than random initialization.
+
+\textit{GMM} was run 100 times with random and k-means initialization to avoid some bad local optima. As we can see from Figure~\ref{fig:number_iterations}, \textit{GMM} with random initialization never converged with the number of iterations below 20, whereas \textit{GMM} with k-means initialization converged mostly only with about eight iterations.
+
+On the other hand, the initialization does not play a significant role in the quality of the solution. Both the random and k-means initialization produce almost the same log likelihoods. Figure~ shows the maximum log likelihoods of both initialization which were run 100 times. Both methods produce almost the same maximum log likelihood, about -666.7011.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.4783]{number_iterations}
+	\caption{Number of iterations of \textit{GMM} ($k=5$) with random and k-means initialization, run 100 times}
+	\label{fig:number_iterations}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.4783]{likelihoods_comparison}
+	\caption{Maximum log likelihoods of \textit{GMM} ($k=5$) with random and k-means initialization, run 100 times}
+	\label{fig:likelihoods_comparison}
+\end{figure}
+
 
 {\raggedright \textbf{Question 6.3: What does the dendogramm of the hierarchical clustering look like and is it possible to pick a suitable value of \textit{k} from the dendogramm?}}\\
+
+It is possible to pick a suitable value of \textit{k} from the dendogramm plot. Figure~\ref{fig:5gaussians_dendogramm_50clusters} shows the dendogramm plot of \textit{kmeans\_agglo} with initial clustering $k=50$. From the plot, we can see that the clusters can actually be divided into five clusters (marked with yellow ellipses). Before the merge of those five clusters, there is no significant increase of the loss values. But after merging those five clusters, the loss values increase significantly.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.7583]{5gaussians_dendogramm_50clusters}
+	\caption{Dendogramm plot of the hierarchical clustering with initial clustering $k=50$}
+	\label{fig:5gaussians_dendogramm_50clusters}
+\end{figure}
 
 In this case the difference in iterations
 seems insignificant. However, as will be seen in the presence of poorly separated data a good choice for our
 initial guesses can drastically reduce the number of iterations required to obtain convergence
 
 
-
-This assignment asks us to apply \textit{PCA} to the \textit{usps} data set and visualizing the results. The \textit{usps} data set consists of 2007 images with the dimension of \textit{16 x 16}. The images are hand-written digits of zero to nine, which can be viewed as classes. Firstly, i separate the data set according to each digit into ten classes and then applied \textit{PCA} to each class. The \textit{PCA} was applied to the original data set and noisy data set.
-
-
-
-%\begin{figure}[h!]
-%	\centering
-%	\includegraphics[scale=0.4983]{normalpca_0-5}
-%	\caption{Principal components of usps original data set for class 0 - 5}
-%	\label{fig:pcaOriginal05}
-%\end{figure}
-
-
 %#############################################################################################
 \section{Assignment 7: \textit{2gaussian} Analysis}
 \label{assignment7}
 
-In this assignment, the $\gamma$-index method is utilized to detect outliers and applied it to the \textit{banana} data set. The positive class of the data set is used as \textit{inliers}, to which the negative class is added as outliers. The $\gamma$-index is then used to detect outliers with contamination rates of 1\%, 5\%, 10\% and 25\% relative to the positive class. Figure~\ref{fig:bananacomplete} shows the complete original data set, both positive and negative class, whereas Figure~\ref{fig:bananacontaminated} shows the contaminated data set.
+In this assignment the \textit{2gaussians} data set should be analyzed with \textit{k-means} and \textit{GMM}. Figure~\ref{fig:2gaussians} show the original \textit{2gaussians} data set.
 
-
-
-There are three methods that should be used to detect the outliers: (a) the $\gamma$-index with $k=3$, (b) the $\gamma$-index with $k=10$ and (c) the distance to the mean for each data point. All of the methods are then applied to the four contamination rates mentioned above. After that, the \textit{AUC} (area under the \textit{ROC}) should be calculated. Figure~\ref{fig:gammaboxplots} shows the boxplots that visualize the distribution of the \textit{AUC} values.
-
-
-
-The boxplots show that the method using the distance to the mean for each data point performed quite bad, while both of the $\gamma$-index methods performed very well, especially for the data set with lower contamination rates. The $\gamma$-index with $k=10$ performed slightly better than the $\gamma$-index with $k=3$.
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{2gaussians}
+	\caption{\textit{2gaussians} data set}
+	\label{fig:2gaussians}
+\end{figure}
 
 
 %#############################################################################################

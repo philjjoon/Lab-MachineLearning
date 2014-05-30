@@ -7,5 +7,5 @@
 \contentsline {section}{\numberline {1.5}Assignment 5: EM Visualization}{2}{section.1.5}
 \contentsline {chapter}{\numberline {2}Application}{3}{chapter.2}
 \contentsline {section}{\numberline {2.1}Assignment 6: \textit {5gaussians} Analysis}{3}{section.2.1}
-\contentsline {section}{\numberline {2.2}Assignment 7: \textit {2gaussian} Analysis}{5}{section.2.2}
-\contentsline {section}{\numberline {2.3}Assignment 8: \textit {USPS} Analysis}{5}{section.2.3}
+\contentsline {section}{\numberline {2.2}Assignment 7: \textit {2gaussian} Analysis}{8}{section.2.2}
+\contentsline {section}{\numberline {2.3}Assignment 8: \textit {USPS} Analysis}{9}{section.2.3}

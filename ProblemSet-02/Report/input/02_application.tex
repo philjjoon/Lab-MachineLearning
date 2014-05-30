@@ -8,7 +8,7 @@ In this chapter, the implementations should be applied to three datasets: \texti
 \section{Assignment 6: \textit{5gaussians} Analysis}
 \label{assignment6}
 
-In this assignment, the \textit{5gaussians} data set is analyzed. The data set should be clustered using \textit{k-means} and \textit{GMM} for $k = 2, ..., 10$. Figure~\ref{fig:5gaussians} shows the original \textit{5gaussians} data set. Since the data set is constructed with five gaussians, $k=5$ is the best choice for the number of clusters.
+In this assignment, the \textit{5gaussians} data set is analyzed. The data set should be clustered using \textit{k-means} and \textit{GMM} for $k = 2, ..., 10$. Figure~\ref{fig:5gaussians} shows the original \textit{5gaussians} data set. Since the data set is constructed with five gaussians, $k=5$ is the best choice for the number of clusters. \\
 
 \begin{figure}[h!]
 	\centering
@@ -18,6 +18,7 @@ In this assignment, the \textit{5gaussians} data set is analyzed. The data set s
 \end{figure}
 
 {\raggedright \textbf{Question 6.1: Do both methods find the five clusters reliably?}} \\
+
 \textit{K-means} finds the five clusters reliably. Since \textit{k-means} can have different result depending on the initialization, it was run 100 times. The loss value from each run was calculated, as depicted in Figure~\ref{fig:lossvalues_kmeans}. The clustering which gives the lowest loss value was then picked and visualized in Figure~\ref{fig:5gaussians_kmeans}.
 
 \begin{figure}[h!]
@@ -69,7 +70,7 @@ Finally, \textit{GMM} with \textit{k-means} initialization was utilized. It also
 As we have seen above, the three methods can find the five clusters reliably, because the \textit{5gaussians} data set is a well-separated data set.
 
 %\newpage
-\pagebreak[4]
+%\pagebreak[4]
 {\raggedright \textbf{Question 6.2: What role does the initialization of the GMM with a k-means solution play in the number of necessary iterations and the quality of the solution?}}\\
 
 The initialization of the \textit{GMM} with a \textit{k-means} solution plays a significant role in the number of necessary iterations until the convergence is reached. \textit{GMM} depends strongly on the initialization. With \textit{k-means} initialization, the \textit{GMM} converged more quickly than random initialization.
@@ -92,11 +93,6 @@ On the other hand, the initialization does not play a significant role in the qu
 	\label{fig:likelihoods_comparison}
 \end{figure}
 
-
-{\raggedright \textbf{Question 6.3: What does the dendogramm of the hierarchical clustering look like and is it possible to pick a suitable value of \textit{k} from the dendogramm?}}\\
-
-It is possible to pick a suitable value of \textit{k} from the dendogramm plot. Figure~\ref{fig:5gaussians_dendogramm_50clusters} shows the dendogramm plot of \textit{kmeans\_agglo} with initial clustering $k=50$. From the plot, we can see that the clusters can actually be divided into five clusters (marked with yellow ellipses). Before the merge of those five clusters, there is no significant increase of the loss values. But after merging those five clusters, the loss values increase significantly.
-
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.7583]{5gaussians_dendogramm_50clusters}
@@ -104,11 +100,12 @@ It is possible to pick a suitable value of \textit{k} from the dendogramm plot. 
 	\label{fig:5gaussians_dendogramm_50clusters}
 \end{figure}
 
-In this case the difference in iterations
-seems insignificant. However, as will be seen in the presence of poorly separated data a good choice for our
-initial guesses can drastically reduce the number of iterations required to obtain convergence
+\newpage
+{\raggedright \textbf{Question 6.3: What does the dendogramm of the hierarchical clustering look like and is it possible to pick a suitable value of \textit{k} from the dendogramm?}}\\
 
+It is possible to pick a suitable value of \textit{k} from the dendogramm plot. Figure~\ref{fig:5gaussians_dendogramm_50clusters} shows the dendogramm plot of \textit{kmeans\_agglo} with initial clustering $k=50$. From the plot, we can see that the clusters can actually be divided into five clusters (marked with yellow ellipses). Before the merge of those five clusters, there is no significant increase of the loss values. But after merging those five clusters, the loss values increase significantly.
 
+\pagebreak[4]
 %#############################################################################################
 \section{Assignment 7: \textit{2gaussian} Analysis}
 \label{assignment7}
@@ -122,16 +119,19 @@ In this assignment the \textit{2gaussians} data set should be analyzed with \tex
 	\label{fig:2gaussians}
 \end{figure}
 
-{\raggedright \textbf{Question 7.1: Compare the cluster centers. Which algorithm works better and why?}}\\
-
-\textit{K-means}, \textit{GMM} with random and k-means initialization were used to cluster the \textit{2gaussians} data set. Each method was run 100 times to avoid bad local optima. For \textit{k-means} method, the clustering which gives the lowest loss value was picked, whereas for \textit{GMM}, the clustering which gives the highest log likelihood was picked. Figure~\ref{fig:2gaussians_kmeans} shows the clustering using \textit{k-means}, whereas Figure~\ref{fig:2gaussians_gmm_random} and Figure~\ref{fig:2gaussians_gmm_kmeans} show the clustering using \textit{GMM} with random and k-means initialization.
-
 \begin{figure}[h!]
 	\centering
 	\includegraphics[scale=0.5983]{2gaussians_kmeans}
 	\caption{k-means clustering with $k=2$, applied to \textit{2gaussians} data set}
 	\label{fig:2gaussians_kmeans}
 \end{figure}
+
+\newpage
+
+{\raggedright \textbf{Question 7.1: Compare the cluster centers. Which algorithm works better and why?}}\\
+
+\textit{K-means}, \textit{GMM} with random and k-means initialization were used to cluster the \textit{2gaussians} data set. Each method was run 100 times to avoid bad local optima. For \textit{k-means} method, the clustering which gives the lowest loss value was picked, whereas for \textit{GMM}, the clustering which gives the highest log likelihood was picked. Figure~\ref{fig:2gaussians_kmeans} shows the clustering using \textit{k-means}, whereas Figure~\ref{fig:2gaussians_gmm_random} and Figure~\ref{fig:2gaussians_gmm_kmeans} show the clustering using \textit{GMM} with random and k-means initialization.
+
 
 \begin{figure}[h!]
 	\centering
@@ -149,7 +149,7 @@ In this assignment the \textit{2gaussians} data set should be analyzed with \tex
 
 From the plots, it can be obtained that the \textit{GMM} with random initialization is the best method to cluster the \textit{2gaussians} data set. The \textit{k-means} method did not perform very well, because the objective of \textit{k-means} is to minimize the loss value, which basically depends strongly on the euclidean distances of each data point. But the data set was created using mixture of two gaussians which is separated as upper- and lower part. Therefore two data points can have a small euclidean distance although they are from two different gaussians. 
 
-The \textit{GMM} with random initialization performed very well, because its objective is to maximize the log likelihood, which can be calculated using the gaussian function. Instead of depending on the mean of data points, it uses maximization to find the best clustering. On the other hand, the \textit{GMM} with k-means initialization did not perform very well, because \textit{GMM} depends strongly on the initialization. Since it used the result of k-means to do the initialization, it performed almost in the same way as k-means.
+The \textit{GMM} with random initialization performed very well, because its objective is to maximize the log likelihood, which can be calculated using the gaussian function. Instead of depending on the mean of data points, it uses maximization to find the best clustering. On the other hand, the \textit{GMM} with k-means initialization did not perform very well, because \textit{GMM} depends strongly on the initialization. Since it used the result of k-means to do the initialization, it performed almost in the same way as k-means.\\
 
 {\raggedright \textbf{Question 7.2: How does the GMM depends on the initialization}}\\
 
@@ -160,4 +160,43 @@ The \textit{GMM} depends strongly on the initialization, as we can see in the Fi
 \section{Assignment 8: \textit{USPS} Analysis}
 \label{assignment8}
 
-In the last assignment of this problem set, the \textit{k-means} and \textit{GMM} algorithm should be applied to the \textit{USPS} data set with $k=10$.
+In the last assignment of this problem set, the \textit{k-means} and \textit{GMM} algorithm should be applied to the \textit{USPS} data set with $k=10$.\\
+
+{\raggedright \textbf{Question 8.1: Compare the cluster centers. Which algorithm delivers better results?}}\\
+
+The \textit{k-means} performed quite well on the \textit{USPS} data set. The cluster centers that repersented as 16 x 16 images show that almost all digits were recognized, only the digit 5 was missing. Figure~\ref{fig:usps_kmeans} shows the cluster centers of usps data set with k-means.
+
+The \textit{GMM} performed worse than \textit{k-means}, as shown in Figure~\ref{fig:usps_gmm_random}. Maybe because of the regularization of the covariance matrix, i did not find a good value to use for the regularization.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{usps_kmeans}
+	\caption{Cluster centers of usps data set with k-means ($k=10$)}
+	\label{fig:usps_kmeans}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{usps_gmm_random}
+	\caption{Cluster centers of usps data set with GMM with random initialization ($k=10$)}
+	\label{fig:usps_gmm_random}
+\end{figure}
+
+\newpage
+{\raggedright \textbf{Question 8.2: Set up a dendogramm to the hierarchical clustering solution and also a plot which displays the cluster centroids as a 16 x 16 image at every agglomerative step}}\\
+
+Figure~\ref{fig:usps_dendogramm} depicts the Dendogramm to the hierarchical clustering solution, whereas Figure~\ref{fig:usps_agglomerative_cluster_centers} depicts the cluster centroids as a 16 x 16 image at every agglomerative step.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.7583]{usps_dendogramm}
+	\caption{Dendogramm to the hierarchical clustering solution}
+	\label{fig:usps_dendogramm}
+\end{figure}
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[scale=0.5983]{usps_agglomerative_cluster_centers}
+	\caption{Cluster centers of usps data at every agglomerative step}
+	\label{fig:usps_agglomerative_cluster_centers}
+\end{figure}

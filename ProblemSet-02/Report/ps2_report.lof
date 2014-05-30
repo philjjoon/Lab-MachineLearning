@@ -14,3 +14,7 @@
 \contentsline {figure}{\numberline {2.12}{\ignorespaces k-means clustering with $k=2$, applied to \textit {2gaussians} data set\relax }}{9}{figure.caption.14}
 \contentsline {figure}{\numberline {2.13}{\ignorespaces GMM clustering with random initialization, $k=2$, applied to \textit {2gaussians} data set\relax }}{10}{figure.caption.15}
 \contentsline {figure}{\numberline {2.14}{\ignorespaces GMM clustering with k-means initialization, $k=2$, applied to \textit {2gaussians} data set\relax }}{10}{figure.caption.16}
+\contentsline {figure}{\numberline {2.15}{\ignorespaces Cluster centers of usps data set with k-means ($k=10$)\relax }}{11}{figure.caption.17}
+\contentsline {figure}{\numberline {2.16}{\ignorespaces Cluster centers of usps data set with GMM with random initialization ($k=10$)\relax }}{11}{figure.caption.18}
+\contentsline {figure}{\numberline {2.17}{\ignorespaces Dendogramm to the hierarchical clustering solution\relax }}{12}{figure.caption.19}
+\contentsline {figure}{\numberline {2.18}{\ignorespaces Cluster centers of usps data at every agglomerative step\relax }}{13}{figure.caption.20}

@@ -1,0 +1,7 @@
+\contentsline {chapter}{List of Figures}{iii}{chapter*.1}
+\contentsline {chapter}{\numberline {1}Implementation}{1}{chapter.1}
+\contentsline {section}{\numberline {1.1}Assignment 1: Cross Validation}{1}{section.1.1}
+\contentsline {section}{\numberline {1.2}Assignment 2: Kernel Ridge Regression}{2}{section.1.2}
+\contentsline {chapter}{\numberline {2}Application}{3}{chapter.2}
+\contentsline {section}{\numberline {2.1}Assignment 3: ROC Curve}{3}{section.2.1}
+\contentsline {section}{\numberline {2.2}Assignment 4: Kernel Ridge Regression}{3}{section.2.2}

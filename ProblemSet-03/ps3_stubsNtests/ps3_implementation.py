@@ -51,16 +51,26 @@ def cv(X, y, method, params, loss_function=zero_one_loss, nfolds=10, nrepetition
     kernelparam = params[3]
     regularization = params[5]
     combs = it.product(*[kernel, kernelparam, regularization])
+    all_loss = []
+    #props = []
     for param in combs:
-        error = 0
+        loss = 0
         for i in range(nrepetitions):
             splitted_data = split_data(X, nfolds)
                 for j in range(nfolds):
                     test_data = splitted_data[j]
                     training_data = join_data(splitted_data, j)
-                    krr.fit(X, y, param[0], param[1], param[2])
+                    method.fit(training_data, y, param[0], param[1], param[2])
+                    method.predict(test_data)
+                    loss += loss_function(y, method.y_pred)
 
+        loss = loss / float((nfolds * nrepetitions))
+        all_loss.append(loss)
 
+    min_loss = np.argmin(all_loss)
+    method.fit(X, y, combs[min_loss][0], combs[min_loss][1], combs[min_loss][2])
+    method.predict(X)
+    method.cvloss = min(all_loss)
 
 
     '''
@@ -168,27 +178,45 @@ class krr():
             self.kernelparameter = kernelparameter
         if regularization is not False:
             self.regularization = regularization
-        
-        # alpha = (K + CI)inverse . Y
 
+        d, n = X.shape
+
+        # Add an extra dimension to X which always set to 1 
+        X_new = np.ones([d+1, n])
+        X_new[1:, :] = X
+
+        I = np.eye(n)
+        I_new = np.zeros([n+1, n+1])
+        I_new[1:, 1:] = I
+
+        K = compute_kernel(X_new, kernel, kernelparameter)
+        # alpha = (K + CI)inverse . Y
+        alpha = np.dot(la.inverse(K + (regularization * I_new)), y)
+        self.weight = np.dot(X_new, alpha)
+
+        # weight
         return self
                     
     def predict(self, X):
         ''' your header here!
         '''
         #self.ypred -> see task description
+        X_new = np.ones([d+1, n])
+        X_new[1:, :] = X
+        self.y_pred = np.dot(X_new.T, self.weight)
+
         return self
 
-    def compute_kernel(X, kernel, param):
+    def compute_kernel(X, kernel, kernelparameter):
         ''' your header here '''
         if kernel == 'linear':
             return np.dot(X.T, X)
 
         elif kernel == 'polynomial':
-            return np.power((np.dot(X.T, X) + 1), param)
+            return np.power((np.dot(X.T, X) + 1), kernelparameter)
         
         elif kernel == 'gaussian':
-            return np.exp(-(squareform(pdist(X.T, 'sqeuclidean'))) / (2 * (param ** 2)))
+            return np.exp(-(squareform(pdist(X.T, 'sqeuclidean'))) / (2 * (kernelparameter ** 2)))
 
         else:
             return "ERROR: Kernel is unknown"

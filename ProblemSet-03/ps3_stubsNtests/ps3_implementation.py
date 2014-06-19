@@ -20,6 +20,7 @@ import time
 import pylab as pl
 from mpl_toolkits.mplot3d import Axes3D
 from scipy.spatial.distance import pdist
+from scipy.spatial.distance import cdist
 from scipy.spatial.distance import squareform
 
 def zero_one_loss(y_true, y_pred):
@@ -53,22 +54,27 @@ def cv(X, y, method, params, loss_function=zero_one_loss, nfolds=10, nrepetition
     combs = it.product(*[kernel, kernelparam, regularization])
     all_loss = []
     #props = []
+    #print 'y: ', y.shape
+    params = []
     for param in combs:
+        params.append(param)
         loss = 0
         for i in range(nrepetitions):
-            splitted_data = split_data(X, nfolds)
-                for j in range(nfolds):
-                    test_data = splitted_data[j]
-                    training_data = join_data(splitted_data, j)
-                    method.fit(training_data, y, param[0], param[1], param[2])
-                    method.predict(test_data)
-                    loss += loss_function(y, method.y_pred)
+            splitted_data, splitted_Y = split_data(X, y, nfolds)
+            for j in range(nfolds):
+                test_data = splitted_data[j]
+                training_data, training_Y = join_data(splitted_data, splitted_Y, j)
+                #print 'test_data: ', test_data.shape
+                #print 'training_data: ', training_data.shape
+                method.fit(training_data, training_Y, param[0], param[1], param[2])
+                method.predict(test_data)
+                loss += loss_function(splitted_Y[j], method.ypred)
 
         loss = loss / float((nfolds * nrepetitions))
         all_loss.append(loss)
 
     min_loss = np.argmin(all_loss)
-    method.fit(X, y, combs[min_loss][0], combs[min_loss][1], combs[min_loss][2])
+    method.fit(X, y, params[min_loss][0], params[min_loss][1], params[min_loss][2])
     method.predict(X)
     method.cvloss = min(all_loss)
 
@@ -93,35 +99,42 @@ def cv(X, y, method, params, loss_function=zero_one_loss, nfolds=10, nrepetition
 	'''
     return method
 
-def join_data(splitted_data, test_idx):
-	d, n = splitted_data[0].shape
-	join = np.empty(d, n)
-	first_data = True
-	for j in range(len(splitted_data)):
-		if j != test_idx:
-			if first_data:
-				join = splitted_data[j]
-				first_data = False
-			else:
-				join = np.concatenate((join, splitted_data[j]), axis=1)
+def join_data(splitted_data, splitted_Y, test_idx):
+    d, n = splitted_data[0].shape
+    join_data = np.empty([d, n])
+    join_Y = np.empty(n)
+    #join = np.zeros(d, n)
+    first_data = True
+    for j in range(len(splitted_data)):
+        if j != test_idx:
+            if first_data:
+                join_data = splitted_data[j]
+                join_Y = splitted_Y[j]
+                first_data = False
+            else:
+                join_data = np.concatenate((join_data, splitted_data[j]), axis=1)
+                join_Y = np.concatenate((join_Y, splitted_Y[j]), axis=1)
 
-	return join
+    return join_data, join_Y
 
 
-def split_data(X, nfolds):
+def split_data(X, Y, nfolds):
     n = X.shape[1]
+    #print 'n: ', n
     size = n / nfolds
     rest = n % nfolds
     data_idx = np.arange(n)
     
-    result = []
+    splitted_data = []
+    splitted_Y = []
     counter = 0
     for i in range(nfolds):
         #print 'i: ', str(i) 
         idx = np.random.choice(data_idx, size + 1 if counter < rest else size, replace=False)
         #print 'idx: ' , idx, 'Length: ', idx.shape
         data = X[:, idx]
-        result.append(data)
+        splitted_data.append(data)
+        splitted_Y.append(Y[:, idx])
 
         mask = np.ones(len(data_idx), dtype=bool)
         #mask_idx = np.nonzero(data_idx == idx)[0]
@@ -132,7 +145,7 @@ def split_data(X, nfolds):
         data_idx = data_idx[mask]
         counter += 1
 
-    return result
+    return splitted_data, splitted_Y
 
 def compute_size_each_fold(n, nfolds):
     '''your header here!
@@ -146,9 +159,9 @@ def compute_size_each_fold(n, nfolds):
     
     return result
         
-
+'''
 def compute_kernel(X, kernel, param):
-        ''' your header here '''
+        
         if kernel == 'linear':
             return np.dot(X.T, X)
 
@@ -160,7 +173,7 @@ def compute_kernel(X, kernel, param):
 
         else:
             return "ERROR: Kernel is unknown"
-
+'''
 class krr():
     ''' KRR class implementation
     '''
@@ -180,43 +193,62 @@ class krr():
             self.regularization = regularization
 
         d, n = X.shape
-
+        #print 'd: ', d
+        #print 'n: ', n
+        #print 'y.shape: ', y.shape
         # Add an extra dimension to X which always set to 1 
-        X_new = np.ones([d+1, n])
-        X_new[1:, :] = X
+        #X_new = np.ones([d+1, n])
+        #X_new[1:, :] = X
 
-        I = np.eye(n)
-        I_new = np.zeros([n+1, n+1])
-        I_new[1:, 1:] = I
-
-        K = compute_kernel(X_new, kernel, kernelparameter)
+        #I = np.eye(n)
+        #I_new = np.zeros([n+1, n+1])
+        #I_new[1:, 1:] = I
+        self.X = X
+        K = self.compute_kernel(X, X, kernel, kernelparameter)
+        
+        #print 'K.shape: ', K.shape
+        #print 'y.shape: ', y.shape
         # alpha = (K + CI)inverse . Y
-        alpha = np.dot(la.inverse(K + (regularization * I_new)), y)
-        self.weight = np.dot(X_new, alpha)
-
+        self.alpha = np.dot(la.inv(K + (regularization * np.eye(n))), y.T)
+        #self.weight = np.dot(X, self.alpha)
+        #self.weight = np.dot(np.dot(la.inv(X), K), self.alpha)
+        #self.weight = np.array(la.lstsq(X.T, np.dot(K, self.alpha)))
+        #print 'self.weight: ', self.weight.shape
         # weight
+
         return self
                     
     def predict(self, X):
         ''' your header here!
         '''
         #self.ypred -> see task description
-        X_new = np.ones([d+1, n])
-        X_new[1:, :] = X
-        self.y_pred = np.dot(X_new.T, self.weight)
+        #X_new = np.ones([d+1, n])
+        #X_new[1:, :] = X
+        #K = compute_kernel(X, self.kernel, self.kernelparameter)
+        #print 'K: ', K.shape
+
+        #self.ypred = np.dot(K, self.alpha).T
+        #print 'X.shape: ', X.shape
+        #print 'Alpha: ', self.alpha.shape
+        #weight = np.dot(X, self.alpha)
+        K = self.compute_kernel(X, self.X, self.kernel, self.kernelparameter)
+        #print 'K: ', K.shape
+        #print 'alpha: ', self.alpha.shape
+        self.ypred = np.dot(K, self.alpha).T
 
         return self
 
-    def compute_kernel(X, kernel, kernelparameter):
+    def compute_kernel(self, X, Z, kernel, kernelparameter):
         ''' your header here '''
         if kernel == 'linear':
-            return np.dot(X.T, X)
+            return np.dot(X.T, Z)
 
         elif kernel == 'polynomial':
-            return np.power((np.dot(X.T, X) + 1), kernelparameter)
+            return np.power((np.dot(X.T, Z) + 1), kernelparameter)
         
         elif kernel == 'gaussian':
-            return np.exp(-(squareform(pdist(X.T, 'sqeuclidean'))) / (2 * (kernelparameter ** 2)))
+            return np.exp(-(cdist(X.T, Z.T, 'sqeuclidean')) / (2 * (kernelparameter ** 2)))
+            #return np.exp(-(squareform(pdist(X.T, 'sqeuclidean'))) / (2 * (kernelparameter ** 2)))
 
         else:
             return "ERROR: Kernel is unknown"

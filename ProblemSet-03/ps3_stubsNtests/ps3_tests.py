@@ -12,7 +12,7 @@ import scipy.linalg as la
 import pylab as pl
 
 import ps3_implementation as imp
-# imp = reload(imp)
+imp = reload(imp)
 # Users/danielbartz/Documents/Promotion/Lehre/teaching/ss13/praktikum/submissions/ps3/Max_Weule/ 
 import sys
 '''
@@ -35,6 +35,8 @@ sys.path.insert(0, '/Users/danielbartz/Documents/Promotion/Lehre/teaching/ss13/p
 def squared_error_loss(y_true, y_pred):
     ''' returns the squared error loss
     '''
+    #print 'y_true: ', y_true.shape
+    #print 'y_pred: ', y_pred.shape
     loss = np.mean( (y_true - y_pred)**2 )
     return loss
 

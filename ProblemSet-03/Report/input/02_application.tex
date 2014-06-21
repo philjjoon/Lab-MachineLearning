@@ -2,22 +2,18 @@
 \label{chap:application}
 %#############################################################################################
 
-In this chapter, we are trying to apply the algorithms that are described and implemented in Chapter~\ref{implementation} to various datasets: \textit{usps}, \textit{banana}, \textit{fishbowl}, \textit{swissroll} and \textit{flatroll}.
-
 
 %#############################################################################################
 \section{Assignment 3: ROC Curve}
 \label{assignment3}
 
-This assignment asks us to apply \textit{PCA} to the \textit{usps} data set and visualizing the results. The \textit{usps} data set consists of 2007 images with the dimension of \textit{16 x 16}. The images are hand-written digits of zero to nine, which can be viewed as classes. Firstly, i separate the data set according to each digit into ten classes and then applied \textit{PCA} to each class. The \textit{PCA} was applied to the original data set and noisy data set.
-
-
+In this assignment, the ROC curve of a simple 1D-toy data set with two classes should be plotted. Each class is normal with standard deviation one and identical priors. Figure~\ref{fig:roc_curve} depicts the ROC curve of the data set. Four sample sizes are used to generate the ROC curve: 10, 100, 1000 and 10000.
 
 \begin{figure}[h!]
 	\centering
-	\includegraphics[scale=0.4983]{normalpca_0-5}
-	\caption{Principal components of usps original data set for class 0 - 5}
-	\label{fig:pcaOriginal05}
+	\includegraphics[scale=0.4983]{roc_curve}
+	\caption{ROC curve with different sample sizes}
+	\label{fig:roc_curve}
 \end{figure}
 
 
@@ -25,29 +21,26 @@ This assignment asks us to apply \textit{PCA} to the \textit{usps} data set and 
 \section{Assignment 4: Kernel Ridge Regression}
 \label{assignment4}
 
-In this assignment, the $\gamma$-index method is utilized to detect outliers and applied it to the \textit{banana} data set. The positive class of the data set is used as \textit{inliers}, to which the negative class is added as outliers. The $\gamma$-index is then used to detect outliers with contamination rates of 1\%, 5\%, 10\% and 25\% relative to the positive class. Figure~\ref{fig:bananacomplete} shows the complete original data set, both positive and negative class, whereas Figure~\ref{fig:bananacontaminated} shows the contaminated data set.
+In this assignment, the \textit{krr} should be applied to five data sets: \textit{banana}, \textit{diabetis}, \textit{flare-solar}, \textit{image} and \textit{ringnorm}. \textit{krr} should be applied to each data set using efficient cross-validation and then finds the best classifier by cross-validation. The normal CV takes a longer time than the efficient LOOCV to optimize the regularization, because it has to cross-validate all of the folds and calculate the inverse matrix. On the other hand, the efficient LOOCV only do one inverse in order to get the optimal regularization parameter. Furthermore, the inverse of efficient LOOCV is only an inverse of a diagonal matrix which can be easily calculated by inverting the diagonal. Table~\ref{tab:cv} shows the optimal parameters for each data set.
 
-\begin{figure}[h!]
-	\centering
-	\includegraphics[scale=0.4983]{banana_complete}
-	\caption{Both positive and negative of banana data set, including the mean of both classes}
-	\label{fig:bananacomplete}
-\end{figure}
+From the experiment, it turned out that gaussian kernel is the optimal kernel for all data sets. But i think the regularization parameter obtained by the efficient LOOCV was wrong, because it is always 1.8 for all data sets. I think the reason for that is because the eigenvalues of the kernel matrix $K$ used for $c$ in efficient LOOCV are very small values, so that it always return $mean=1$. Unfortunately, i cannot find where the mistake is. The whole experiment took about 6 hours. The longest CV execution is by \textit{image} data set which took about 
+3.5 hours.
 
-\begin{figure}[h!]
-	\centering
-	\includegraphics[scale=0.4983]{banana_contaminated}
-	\caption{Contaminated banana data set with contamination rate of 1\%, 5\%, 10\% and 25\%}
-	\label{fig:bananacontaminated}
-\end{figure}
+\begin{table}
+\begin{tabular}{l*{6}{c}r}
+\centering
+\textbf{Dataset}  & \textbf{Kernel} & \textbf{Kernelparameter} &  \textbf{Cvloss} & \textbf{Regularization} & \textbf{Time (in seconds)} \\
+\hline
+Banana & Gaussian & 0.215 & 0.099 & 1.80 & 272.435  \\
+Diabetis            & Gaussian & 4.641 & 0.243 & 1.80 & 584.214  \\
+Flare-Solar           & Gaussian & 4.641 & 0.354 & 1.80 & 949.138  \\
+Image     & Gaussian & 0.599 & 0.029 & 1.80  & 12544.090 \\
+Ringnorm     & Gaussian & 0.077 & 0.046 & 1.80 & 291.681 \\
+\end{tabular}
+\caption{The optimal parameters for each data set}
+\label{tab:cv}
+\end{table}
 
-There are three methods that should be used to detect the outliers: (a) the $\gamma$-index with $k=3$, (b) the $\gamma$-index with $k=10$ and (c) the distance to the mean for each data point. All of the methods are then applied to the four contamination rates mentioned above. After that, the \textit{AUC} (area under the \textit{ROC}) should be calculated. Figure~\ref{fig:gammaboxplots} shows the boxplots that visualize the distribution of the \textit{AUC} values.
 
-\begin{figure}[h!]
-	\centering
-	\includegraphics[scale=0.5583]{gamma_boxplots}
-	\caption{Boxplots visualizing the distribution of the \textit{AUC} values}
-	\label{fig:gammaboxplots}
-\end{figure}
 
-The boxplots show that the method using the distance to the mean for each data point performed quite bad, while both of the $\gamma$-index methods performed very well, especially for the data set with lower contamination rates. The $\gamma$-index with $k=10$ performed slightly better than the $\gamma$-index with $k=3$.
+

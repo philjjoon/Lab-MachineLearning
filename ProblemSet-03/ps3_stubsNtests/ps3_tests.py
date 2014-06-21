@@ -35,8 +35,6 @@ sys.path.insert(0, '/Users/danielbartz/Documents/Promotion/Lehre/teaching/ss13/p
 def squared_error_loss(y_true, y_pred):
     ''' returns the squared error loss
     '''
-    #print 'y_true: ', y_true.shape
-    #print 'y_pred: ', y_pred.shape
     loss = np.mean( (y_true - y_pred)**2 )
     return loss
 
@@ -125,6 +123,7 @@ def cv_test():
 
     pl.plot(Xtr.T,Ytr.T)
     pl.plot(Xte.T,cvkrr.ypred.T)
+    pl.title('CV with fixed regularization')
 
     pl.subplot(1,2,2)
     params = [ 'kernel',['gaussian'], 'kernelparam', np.logspace(-2,2,10),
@@ -137,6 +136,7 @@ def cv_test():
     
     pl.plot(Xtr.T,Ytr.T)
     pl.plot(Xte.T,cvkrr.ypred.T)
+    pl.title('CV with efficient LOOCV')
     print '\n(time the test takes on my notebook: approx. 6 seconds)'
         
 

@@ -58,15 +58,19 @@ def cv(X, y, method, params, loss_function=zero_one_loss, nfolds=10, nrepetition
             split = np.round(np.arange(1,nfolds) * n/nfolds)
             indices = np.split(indices,split) # list of indices for each fold
             for j in range(nfolds):
-                Xtr = np.delete(X,indices[j],axis=1)
-                Ytr = np.delete(y,indices[j],axis=1)
-                method.fit(Xtr,Ytr,*param)
-                Xte = X[:,indices[j]]
-                method.predict(Xte)
-                method.rocdata[0, indices[j]] = y[0, indices[j]]
-                method.rocdata[1, indices[j]] = method.ypred[0, :]
-                cvloss += loss_function(y[:,indices[j]],method.ypred)
-                
+                try:
+                    Xtr = np.delete(X,indices[j],axis=1)
+                    Ytr = np.delete(y,indices[j],axis=1)
+                    method.fit(Xtr,Ytr,*param)
+                    Xte = X[:,indices[j]]
+                    method.predict(Xte)
+                    method.rocdata[0, indices[j]] = y[0, indices[j]]
+                    method.rocdata[1, indices[j]] = method.ypred[0, :]
+                    cvloss += loss_function(y[:,indices[j]],method.ypred)
+                except:
+                    print 'Exception'
+                    continue
+                    
         CVloss[index] = cvloss
         cvloss = 0
         if index in verbose:

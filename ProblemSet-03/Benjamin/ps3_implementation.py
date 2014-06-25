@@ -29,7 +29,7 @@ def zero_one_loss(y_true, y_pred):
     '''
     _, n = y_true.shape
     diff = y_true - np.sign(y_pred)
-    return len(np.nonzero(diff)[1])/float(n)
+    return len(np.nonzero(diff)[1])/n
     
 
 def cv(X, y, method, params, loss_function=zero_one_loss, nfolds=10, nrepetitions=5):
@@ -50,7 +50,6 @@ def cv(X, y, method, params, loss_function=zero_one_loss, nfolds=10, nrepetition
     CVloss = np.zeros(size)
     cvloss = 0
     verbose = np.unique(np.round(np.linspace(0,size,11)))[:-1]
-    method.rocdata = np.zeros([2, n])
     start = time.time()
     for index,param in enumerate( L):
         for i in range(nrepetitions):
@@ -63,22 +62,16 @@ def cv(X, y, method, params, loss_function=zero_one_loss, nfolds=10, nrepetition
                 method.fit(Xtr,Ytr,*param)
                 Xte = X[:,indices[j]]
                 method.predict(Xte)
-                method.rocdata[0, indices[j]] = y[0, indices[j]]
-                method.rocdata[1, indices[j]] = method.ypred[0, :]
                 cvloss += loss_function(y[:,indices[j]],method.ypred)
-                
         CVloss[index] = cvloss
         cvloss = 0
         if index in verbose:
             stamp = time.time()
             print '%2d / %d parameter combinations completed. Estimated remaining time: %0.3f'%(index+1,size,(size-index)*(stamp-start)/(index+1))
-    CVloss /= float(nrepetitions * nfolds)
+    CVloss /= nrepetitions * nfolds
     method.fit(X,y,*L[np.argmin(CVloss)])
     method.predict(X)
-    end = time.time()
-    #method.cvloss = loss_function(y,method.ypred)
-    method.cvloss = min(CVloss)
-    method.time = end - start
+    method.cvloss = loss_function(y,method.ypred)
     return method
 
     
@@ -111,7 +104,7 @@ class krr():
         if self.regularization == 0:
             eigvals,eigvecs = np.linalg.eigh(K)
             cand = np.log10(np.mean(eigvals))
-            cand = np.logspace(-3+cand,3+cand,10)
+            cand = np.logspace(-5+cand,5+cand,21)
             n = len(eigvals)
             A = eigvecs.dot(np.eye(n)*eigvals)
             C = eigvecs.T.dot(self.ytrue.T)

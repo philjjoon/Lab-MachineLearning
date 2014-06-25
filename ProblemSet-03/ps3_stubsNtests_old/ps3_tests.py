@@ -85,11 +85,12 @@ def krr_test():
                 krr.fit(Xtr,Ytr,kernel=kernels[i],
                         kernelparameter=params[i],
                         regularization=regularizations[i])
+                print 'reg_fixed: ', krr.regularization
             if j==1:
                 krr.fit(Xtr,Ytr,kernel=kernels[i],
                         kernelparameter=params[i],
                         regularization=0)
-                print krr.regularization
+                print 'reg_loocv: ', krr.regularization
             krr.predict(Xte)
             pl.plot(Xtr.T,Ytr.T)
             pl.plot(Xte.T,krr.ypred.T)

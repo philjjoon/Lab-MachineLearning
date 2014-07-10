@@ -64,13 +64,15 @@ class svm_smo():
             b_old, C):
         """ Computes the updated b """
 
+        #b1 = b_old - E_i - (Y[i] * (alpha_new[i] - alpha_old[i]) * K[i, i]) - (Y[j] * (alpha_new[j] - alpha_old[j]) * K[i, j])
+        #b2 = b_old - E_j - (Y[i] * (alpha_new[i] - alpha_old[i]) * K[i, j]) - (Y[j] * (alpha_new[j] - alpha_old[j]) * K[j, j]) 
+        
         b1 = b_old + E_i + (Y[i] * (alpha_new[i] - alpha_old[i]) * K[i, i]) + (Y[j] * (alpha_new[j] - alpha_old[j]) * K[i, j])
-
         b2 = b_old + E_j + (Y[i] * (alpha_new[i] - alpha_old[i]) * K[i, j]) + (Y[j] * (alpha_new[j] - alpha_old[j]) * K[j, j]) 
 
-        if (alpha_new[i] > 0) and (alpha_new[i] < C):
+        if (0 < alpha_new[i]) and (alpha_new[i] < C):
         	b = b1
-        elif (alpha_new[j] > 0) and (alpha_new[j] < C):
+        elif (0 < alpha_new[j]) and (alpha_new[j] < C):
         	b = b2
         else:
         	b = (b1 + b2) / 2
@@ -88,33 +90,33 @@ class svm_smo():
 
         See the pseudo code in the Handbook.
         """
-        alpha_new = np.copy(alpha)
-        changes = False
-        k = (2 * K[i, j]) - K[i, i] - K[j, j]
         
-        if k < 0:
-        	alpha_j_temp = alpha[j] - ((Y[j] * (E_i - E_j))/ k)
-        	
-        	L, H = self._compute_box_constraints(i, j, Y, alpha, C)
-  
-        	if alpha_j_temp > H:
-        		alpha_new[j] = H
-        	elif alpha_j_temp < L:
-        		alpha_new[j] = L
-        	else:
-        		alpha_new[j] = alpha_j_temp
+        L, H = self._compute_box_constraints(i, j, Y, alpha, C)
+        if L == H:
+        	return alpha, b, False
 
-        	alpha_new[i] = alpha[i] + (Y[i] * Y[j] * (alpha[j] - alpha_new[j]))
-   
-        	if abs(alpha[j] - alpha_new[j]) >= 1e-5:
-        		changes = True
+        eta = (2 * K[i, j]) - K[i, i] - K[j, j]
+        if eta >= 0:
+        	return alpha, b, False
 
-        	b = self._compute_updated_b(E_i, E_j, i, j, K, Y, alpha, alpha_new, b, C)
+        alpha_new = np.copy(alpha)
+        alpha_new[j] = alpha[j] - ((Y[j] * (E_i - E_j)) / eta)
+        if alpha_new[j] > H:
+        	alpha_new[j] = H
+        elif alpha_new[j] < L:
+        	alpha_new[j] = L
+        
+        if abs(alpha[j] - alpha_new[j]) < self.tol:
+        	alpha_new[j] = alpha[j]
+        	return alpha, b, False
 
-        return alpha_new, b, changes
+        alpha_new[i] = alpha[i] + (Y[i] * Y[j] * (alpha[j] - alpha_new[j]))
+        b_new = self._compute_updated_b(E_i, E_j, i, j, K, Y, alpha, alpha_new, b, C)
+
+        return alpha_new, b_new, True
 
 
-    def fit(self, X, Y):
+    def fit(self, X, Y, kernel=False, kernelparameter=False, C=False):
         """
         Fit the Support Vector Machine
 
@@ -129,22 +131,32 @@ class svm_smo():
         -------
         self: returns an instance of self.
         """
+        if kernel is not False:
+            self.kernel = kernel
+        if kernelparameter is not False:
+            self.kernelparameter = kernelparameter
+        if C is not False:
+            self.C = C
+
+        Y = np.squeeze(Y)
+        
         d, n = X.shape
         alpha = np.zeros(n)
         b, p = 0, 0
         K = buildKernel(X, kernel=self.kernel, kernelparameter=self.kernelparameter)
+        
         while p < self.max_passes:
         	a = 0
-        	F_X = np.sum((alpha[np.newaxis, :] * Y[np.newaxis, :] * K), axis=1) - b
-        	E = F_X - Y
-        	YE = Y * E
         	for i in range(n):
-        		if (((YE[i] < -self.tol) and (alpha[i] < self.C))
-        			or ((YE[i] > self.tol) and (alpha[i] > 0))):
-        			inds = np.arange(n)
-        			inds = np.delete(inds, np.nonzero(inds == i))
-        			j = np.random.choice(inds)
-        			alpha, b, changes = self._update_parameters(E[i], E[j], i, j, K, Y, alpha, b, self.C)
+        		E_i = (np.sum(K[i, :] * Y * alpha) - b)  - Y[i]
+        		if (((Y[i] * E_i) < -self.tol) and (alpha[i] < self.C)) or (((Y[i] * E_i) > self.tol) and (alpha[i] > 0)):
+        			j = np.random.choice(n)
+        			while j == i:
+        				j = np.random.choice(n)
+
+        			E_j = (np.sum(K[j, :] * Y * alpha) - b)  - Y[j]
+        			alpha, b, changes = self._update_parameters(E_i, E_j, i, j, K, Y, alpha, b, self.C)
+
         			if changes:
         				a += 1
 
@@ -152,14 +164,15 @@ class svm_smo():
         		p += 1
         	else:
         		p = 0
-
-        #gamma = Y * (np.sum((alpha * Y * K + b), axis=1))
-        #inds_sv = 
-        #inds_sv = np.nonzero(alpha > 0 and alpha < self.C)
-        self.alpha_sv = alpha[(0 < alpha) & (alpha < self.C)]
-        self.X_sv = X[:, (0 < alpha) & (alpha < self.C)]
-        self.Y_sv = Y[(0 < alpha) & (alpha < self.C)]
+       
+       	sv = (alpha >= 1e-5)
+        self.alpha_sv = alpha[sv]
+        self.X_sv = X[:, sv]
+        self.Y_sv = Y[sv]
         self.b = b
+        self.w = np.dot((self.alpha_sv * self.Y_sv)[np.newaxis, :], self.X_sv.T)
+        
+        print 'b_sv: ', self.b
 
         return self
 
@@ -176,11 +189,10 @@ class svm_smo():
         y : array, shape = [n_samples]
             Predicted class label per sample.
         """
-        K = buildKernel(self.X_sv, Y=X, kernel=self.kernel, kernelparameter=self.kernelparameter)
-        print 'K.shape predict: ', K.shape
         
-        gamma = np.sum((self.alpha_sv[np.newaxis, :] * self.Y_sv[np.newaxis, :] * K.T), axis=1) - self.b
-        self.ypred = np.sign(gamma)
+        K = buildKernel(X, Y=self.X_sv, kernel=self.kernel, kernelparameter=self.kernelparameter)
+        p = np.sum(K * self.Y_sv[np.newaxis, :] * self.alpha_sv[np.newaxis, :], axis=1) - self.b
+        self.ypred = np.sign(p)
 
         return self
 
@@ -197,32 +209,54 @@ class svm_qp():
         self.X_sv = None
         self.Y_sv = None
     
-    def fit(self, X, Y):
+    def fit(self, X, Y, kernel=False, kernelparameter=False, C=False):
+    	if kernel is not False:
+    		self.kernel = kernel
+    	if kernelparameter is not False:
+    		self.kernelparameter = kernelparameter
+    	if C is not False:
+    		self.C = C
 
-        # INSERT_CODE
-        
+    	d, n = X.shape
+        K = buildKernel(X, kernel=self.kernel, kernelparameter=self.kernelparameter)
+
         # Here you have to set the matrices as in the general QP problem
-        #P = 
-        #q = 
-        #G = 
-        #h = 
-        #A =   # hint: this has to be a row vector
-        #b =   # hint: this has to be a scalar
+        P = np.outer(Y, Y) * K
+        q = np.ones(n) * -1
+        G = np.append(np.diag(np.ones(n) * -1), np.eye(n), axis=0)
+        h = np.append(np.zeros(n), np.ones(n) * self.C)
+        A = Y[np.newaxis, :]
+        b = 0.0
         
         # this is already implemented so you don't have to
         # read throught the cvxopt manual
-        '''alpha = np.array(qp(cvxmatrix(P, tc='d'),
+        alpha = np.array(qp(cvxmatrix(P, tc='d'),
                             cvxmatrix(q, tc='d'),
                             cvxmatrix(G, tc='d'),
                             cvxmatrix(h, tc='d'),
                             cvxmatrix(A, tc='d'),
-                            cvxmatrix(b, tc='d'))['x']).flatten()'''
+                            cvxmatrix(b, tc='d'))['x']).flatten()
 
-        #b = 
+        sv = (alpha >= 1e-5)
+        inds = np.arange(len(alpha))[sv]
+        self.alpha_sv = alpha[sv]
+        self.X_sv = X[:, sv]
+        self.Y_sv = Y[sv]
+
+        self.b = 0
+        for i in range(len(self.alpha_sv)):
+        	self.b += self.Y_sv[i]
+        	self.b -= np.sum(self.alpha_sv * self.Y_sv * K[inds[i], sv])
+
+        self.b /= len(self.alpha_sv)
+
+        return self
 
     def predict(self, X):
 
-        # INSERT_CODE
+        K = buildKernel(X, Y=self.X_sv, kernel=self.kernel, kernelparameter=self.kernelparameter)
+        p = np.sum(K * self.Y_sv[np.newaxis, :] * self.alpha_sv[np.newaxis, :], axis=1) + self.b
+        self.ypred = np.sign(p)
 
         return self
 
@@ -247,9 +281,39 @@ class svm_sklearn():
         return self
 
 
-def plot_svm_2d(X, y, model):
+def plot_svm_2d(X, y, model, title='SVM 2D'):
     # INSERT CODE
-    pass
+    X_pos = X[:, np.nonzero(y == 1)[0]]
+    X_neg = X[:, np.nonzero(y == -1)[0]]
+
+    fig = plt.figure()
+    ax = fig.add_subplot(111)
+    ax.scatter(model.X_sv[0, :], model.X_sv[1, :], c='green', marker='x', s=60, label='support vectors')
+    ax.scatter(X_pos[0, :], X_pos[1, :], c='red', marker='o', label='positive data')
+    ax.scatter(X_neg[0, :], X_neg[1, :], c='blue', marker='o', label='negative data')
+    
+    d, _ = X.shape
+    n = 100
+    x1plot = np.linspace(np.min(X[0, :]), np.max(X[0, :]), n)
+    x2plot = np.linspace(np.min(X[1, :]), np.max(X[1, :]), n)
+    X1, X2 = np.meshgrid(x1plot, x2plot)
+    x = np.zeros([d, n*n])
+    x[0, :] = X1.flatten()
+    x[1, :] = X2.flatten()
+    model.predict(x)
+
+    ax.contour(X1, X2, model.ypred.reshape([n,n]), 1, label='separating hyperplane')
+
+    ax.legend(loc='upper right')
+    x_min, x_max = np.min(X[0, :]), np.max(X[0, :])
+    y_min, y_max = np.min(X[1, :]), np.max(X[1, :])
+    ax.set_xlim(x_min - 1, x_max + 4)
+    ax.set_ylim(y_min - 1, y_max + 1)
+    ax.set_xlabel('$X_0$', fontsize=14)
+    ax.set_ylabel('$X_1$', fontsize=14)
+    ax.set_title(title, fontsize=18)
+    fig.savefig(title + '.png')
+
 
     
 def sqdistmat(X, Y=False):

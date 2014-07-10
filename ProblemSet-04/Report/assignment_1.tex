@@ -1,0 +1,243 @@
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+% Structured General Purpose Assignment
+% LaTeX Template
+%
+% This template has been downloaded from:
+% http://www.latextemplates.com
+%
+% Original author:
+% Ted Pavlic (http://www.tedpavlic.com)
+%
+% Note:
+% The \lipsum[#] commands throughout this template generate dummy text
+% to fill the template out. These commands should all be removed when 
+% writing assignment content.
+%
+%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+
+%----------------------------------------------------------------------------------------
+%	PACKAGES AND OTHER DOCUMENT CONFIGURATIONS
+%----------------------------------------------------------------------------------------
+
+\documentclass{article}
+
+\usepackage{fancyhdr} % Required for custom headers
+\usepackage{lastpage} % Required to determine the last page for the footer
+\usepackage{extramarks} % Required for headers and footers
+%\usepackage{graphicx} % Required to insert images
+\usepackage{lipsum} % Used for inserting dummy 'Lorem ipsum' text into the template
+
+\sloppy
+\makeindex
+
+\usepackage[latin1]{inputenc}
+\usepackage{amsmath, marvosym} % Mathematik
+\usepackage{harvard} %for harvard style citation, keep this position before url package
+\usepackage{times, url, geometry, amssymb, booktabs}
+\usepackage{hyperref} %Hyperlinks zw. Textstellen
+\usepackage[pdftex]{graphicx} %pdf figures
+\usepackage{subfig} %multi-figures
+\usepackage{listings} %code listings
+\usepackage{multirow} %for multi-row tables
+\usepackage{color} %needed for listings
+
+%directory for graphics
+\graphicspath{{gfx/}}
+
+% Margins
+\topmargin=-0.45in
+\evensidemargin=0in
+\oddsidemargin=0in
+\textwidth=6.5in
+\textheight=9.0in
+\headsep=0.25in 
+
+\linespread{1.1} % Line spacing
+
+% Set up the header and footer
+\pagestyle{fancy}
+\lhead{\hmwkAuthorName} % Top left header
+%\chead{\hmwkClass\ (\hmwkClassInstructor\ \hmwkClassTime): \hmwkTitle} % Top center header
+%\rhead{\firstxmark} % Top right header
+\rhead{Problem Set 4} % Top right header
+%\lfoot{\lastxmark} % Bottom left footer
+\cfoot{} % Bottom center footer
+\rfoot{Page\ \thepage\ of\ \pageref{LastPage}} % Bottom right footer
+\renewcommand\headrulewidth{0.4pt} % Size of the header rule
+\renewcommand\footrulewidth{0.4pt} % Size of the footer rule
+
+\setlength\parindent{0pt} % Removes all indentation from paragraphs
+
+%----------------------------------------------------------------------------------------
+%	DOCUMENT STRUCTURE COMMANDS
+%	Skip this unless you know what you're doing
+%----------------------------------------------------------------------------------------
+
+% Header and footer for when a page split occurs within a problem environment
+\newcommand{\enterProblemHeader}[1]{
+\nobreak\extramarks{#1}{#1 continued on next page\ldots}\nobreak
+\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak
+}
+
+% Header and footer for when a page split occurs between problem environments
+\newcommand{\exitProblemHeader}[1]{
+\nobreak\extramarks{#1 (continued)}{#1 continued on next page\ldots}\nobreak
+\nobreak\extramarks{#1}{}\nobreak
+}
+
+\setcounter{secnumdepth}{0} % Removes default section numbers
+\newcounter{homeworkProblemCounter} % Creates a counter to keep track of the number of problems
+
+\newcommand{\homeworkProblemName}{}
+\newenvironment{homeworkProblem}[1][Part \arabic{homeworkProblemCounter}: Implementation]{ % Makes a new environment called homeworkProblem which takes 1 argument (custom name) but the default is "Problem #"
+\stepcounter{homeworkProblemCounter} % Increase counter for number of problems
+\renewcommand{\homeworkProblemName}{#1} % Assign \homeworkProblemName the name of the problem
+\section{\homeworkProblemName} % Make a section in the document with the custom problem count
+\enterProblemHeader{\homeworkProblemName} % Header and footer within the environment
+}{
+\exitProblemHeader{\homeworkProblemName} % Header and footer after the environment
+}
+
+\newcommand{\problemAnswer}[1]{ % Defines the problem answer command with the content as the only argument
+\noindent\framebox[\columnwidth][c]{\begin{minipage}{0.98\columnwidth}#1\end{minipage}} % Makes the box around the problem answer and puts the content inside
+}
+
+\newcommand{\homeworkSectionName}{}
+\newenvironment{homeworkSection}[1]{ % New environment for sections within homework problems, takes 1 argument - the name of the section
+\renewcommand{\homeworkSectionName}{#1} % Assign \homeworkSectionName to the name of the section from the environment argument
+\subsection{\homeworkSectionName} % Make a subsection with the custom name of the subsection
+\enterProblemHeader{\homeworkProblemName\ [\homeworkSectionName]} % Header and footer within the environment
+}{
+\enterProblemHeader{\homeworkProblemName} % Header and footer after the environment
+}
+   
+%----------------------------------------------------------------------------------------
+%	NAME AND CLASS SECTION
+%----------------------------------------------------------------------------------------
+
+\newcommand{\hmwkTitle}{Assignment\ \#1} % Assignment title
+\newcommand{\hmwkDueDate}{Monday,\ January\ 1,\ 2012} % Due date
+\newcommand{\hmwkClass}{BIO\ 101} % Course/class
+\newcommand{\hmwkClassTime}{10:30am} % Class/lecture time
+\newcommand{\hmwkClassInstructor}{Jones} % Teacher/lecturer
+\newcommand{\hmwkAuthorName}{Budi Yanto} % Your name
+
+%----------------------------------------------------------------------------------------
+%	TITLE PAGE
+%----------------------------------------------------------------------------------------
+
+%\title{
+%\vspace{2in}
+%\textmd{\textbf{\hmwkClass:\ \hmwkTitle}}\\
+%\normalsize\vspace{0.1in}\small{Due\ on\ \hmwkDueDate}\\
+%\vspace{0.1in}\large{\textit{\hmwkClassInstructor\ \hmwkClassTime}}
+%\vspace{3in}
+%}
+
+%\author{\textbf{\hmwkAuthorName}}
+%\date{} % Insert date here if you want it to appear below your name
+
+%----------------------------------------------------------------------------------------
+
+\begin{document}
+
+%\maketitle
+\input{input/00a_title_page}
+\newpage
+%----------------------------------------------------------------------------------------
+%	TABLE OF CONTENTS
+%----------------------------------------------------------------------------------------
+
+%\setcounter{tocdepth}{1} % Uncomment this line if you don't want subsections listed in the ToC
+
+%\newpage
+%\tableofcontents
+%\newpage
+
+%----------------------------------------------------------------------------------------
+%	PROBLEM 1
+%----------------------------------------------------------------------------------------
+
+% To have just one problem per page, simply put a \clearpage after each problem
+
+\begin{homeworkProblem}[Part \arabic{homeworkProblemCounter}: Implementation]
+
+In this part, the pseudocode of the SMO from the handbook and the class \textit{svm\_qp} that solves the SVM dual optimization problem as a quadratic programming problem were implemented. Furthermore, a function to plot the SVM 2D was also implemented.
+
+%--------------------------------------------
+
+\begin{homeworkSection}{Assignment 1: SMO}
+
+The SVM SMO should be implemented in this assignment. The implementation was pretty straight forward and the pseudocode in the handbook was really helpful to implement the SMO. All of the tests provided for this assignment were passed. Figure shows the 2D plot of the SVM SMO applied to the test data.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.75\columnwidth]{SVM_SMO_Test} % Example image
+	\caption{SVM SMO applied to the test data}
+	\label{fig:svmQPTest}
+\end{figure}
+
+\end{homeworkSection}
+
+%--------------------------------------------
+
+\begin{homeworkSection}{Assignment 2: Plot SVM 2D}
+
+This function was implemented to plot the 2D data points and its corresponding support vectors. In addition, the separating hyperplane is also plotted. The positive data points are drawn as red circles whereas the negative data points are drawn as blue circles. The support vectors on the other hand are drawn as green crosses.
+
+\end{homeworkSection}
+
+%--------------------------------------------
+
+\begin{homeworkSection}{Assignment 3: SVM QP}
+
+In this assignment, the SVM dual optimization problem should be solved as a quadratic programming problem. The method \textit{cvxopt.solvers.qp} from the package \textit{cvxopt} was used to solve the QP problem. It is pretty straight forward to implement this method. We only have to figure out how to put the SVM dual optimization problem in the form of QP problem. Figure~\ref{fig:svmQPTest} shows the 2D plot of the SVM QP applied to the test data.
+
+\begin{figure}[h!]
+	\centering
+	\includegraphics[width=0.75\columnwidth]{SVM_QP_Test} % Example image
+	\caption{SVM QP applied to the test data}
+	\label{fig:svmQPTest}
+\end{figure}
+
+\end{homeworkSection}
+
+%--------------------------------------------
+
+\end{homeworkProblem}
+
+%\clearpage
+\newpage
+%----------------------------------------------------------------------------------------
+%	PROBLEM 2
+%----------------------------------------------------------------------------------------
+
+\begin{homeworkProblem}[Part \arabic{homeworkProblemCounter}: Application] 
+
+In this part, the SVM SMO implementation should be applied to the \textit{Easy\_2D} and \textit{UCI Iris} datasets. In addition to that, the running time of the \textit{svm\_qp} implementation should be compared to the properly implemented SMO routine \textit{svm\_sklearn}.
+
+%--------------------------------------------
+
+\begin{homeworkSection}{Assignment 4: Easy\_2D Dataset} % Section within problem
+
+\end{homeworkSection}
+
+%--------------------------------------------
+
+\begin{homeworkSection}{Assignment 5: Sklearn} % Section within problem
+
+\end{homeworkSection}
+
+%--------------------------------------------
+
+\begin{homeworkSection}{Assignment 6: UCI Iris Dataset} % Section within problem
+
+\end{homeworkSection}
+
+%--------------------------------------------
+
+\end{homeworkProblem}
+
+%----------------------------------------------------------------------------------------
+
+\end{document}

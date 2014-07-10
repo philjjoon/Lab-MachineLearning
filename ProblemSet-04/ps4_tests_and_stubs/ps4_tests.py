@@ -78,14 +78,16 @@ if update_parameters:
     X_te = np.hstack((np.random.normal(size=[2, 30]), np.random.normal(size=[2, 30]) + np.array([2., 2.])[:, np.newaxis]))
     Y_te = np.array([1] * 30 + [-1] * 30)
     C.fit(X=X_tr, Y=Y_tr)
-    print 'C.alpha_sv: ', C.alpha_sv.shape
-    print 'C.X_sv: ', C.X_sv.shape
-    print 'C.Y_sv: ', C.Y_sv.shape
-    print 'C.b: ', C.b
+    #print 'C.alpha_sv: ', C.alpha_sv.shape
+    #print 'C.X_sv: ', C.X_sv.shape
+    #print 'C.Y_sv: ', C.Y_sv.shape
+    #print 'C.b: ', C.b
     C.predict(X_te)
     Y_pred = C.ypred
+    print 'Y_pred: ', Y_pred
     loss = float(np.sum(np.sign(Y_te) != np.sign(Y_pred)))/float(len(Y_te))
     imp.plot_svm_2d(X_tr, Y_tr, C)
+    
     if not(loss < 0.25):
         msg.append('svm_smo: Error. The loss is %.2f and should be below 0.25' % loss)
         svm_smo = False

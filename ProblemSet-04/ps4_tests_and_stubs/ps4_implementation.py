@@ -49,7 +49,6 @@ class svm_smo():
         Output are the constraints L and H.
         """
 
-        # INSERT_CODE
         if Y[i] == Y[j]:
         	L = max(0, alpha[i] + alpha[j] - C) 
         	H = min(C, alpha[i] + alpha[j])
@@ -63,9 +62,6 @@ class svm_smo():
     def _compute_updated_b(self, E_i, E_j, i, j, K, Y, alpha_old, alpha_new,
             b_old, C):
         """ Computes the updated b """
-
-        #b1 = b_old - E_i - (Y[i] * (alpha_new[i] - alpha_old[i]) * K[i, i]) - (Y[j] * (alpha_new[j] - alpha_old[j]) * K[i, j])
-        #b2 = b_old - E_j - (Y[i] * (alpha_new[i] - alpha_old[i]) * K[i, j]) - (Y[j] * (alpha_new[j] - alpha_old[j]) * K[j, j]) 
         
         b1 = b_old + E_i + (Y[i] * (alpha_new[i] - alpha_old[i]) * K[i, i]) + (Y[j] * (alpha_new[j] - alpha_old[j]) * K[i, j])
         b2 = b_old + E_j + (Y[i] * (alpha_new[i] - alpha_old[i]) * K[i, j]) + (Y[j] * (alpha_new[j] - alpha_old[j]) * K[j, j]) 
@@ -171,8 +167,6 @@ class svm_smo():
         self.Y_sv = Y[sv]
         self.b = b
         self.w = np.dot((self.alpha_sv * self.Y_sv)[np.newaxis, :], self.X_sv.T)
-        
-        print 'b_sv: ', self.b
 
         return self
 
@@ -288,9 +282,9 @@ def plot_svm_2d(X, y, model, title='SVM 2D'):
 
     fig = plt.figure()
     ax = fig.add_subplot(111)
-    ax.scatter(model.X_sv[0, :], model.X_sv[1, :], c='green', marker='x', s=60, label='support vectors')
-    ax.scatter(X_pos[0, :], X_pos[1, :], c='red', marker='o', label='positive data')
-    ax.scatter(X_neg[0, :], X_neg[1, :], c='blue', marker='o', label='negative data')
+    ax.scatter(model.X_sv[0, :], model.X_sv[1, :], c='red', marker='x', s=70, label='support vectors')
+    ax.scatter(X_pos[0, :], X_pos[1, :], c='yellow', marker='o', label='positive data')
+    ax.scatter(X_neg[0, :], X_neg[1, :], c='green', marker='o', label='negative data')
     
     d, _ = X.shape
     n = 100
@@ -312,8 +306,7 @@ def plot_svm_2d(X, y, model, title='SVM 2D'):
     ax.set_xlabel('$X_0$', fontsize=14)
     ax.set_ylabel('$X_1$', fontsize=14)
     ax.set_title(title, fontsize=18)
-    fig.savefig(title + '.png')
-
+    #fig.savefig(title + '.png')
 
     
 def sqdistmat(X, Y=False):

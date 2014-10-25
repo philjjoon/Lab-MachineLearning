@@ -1,4 +1,4 @@
 Lab-MachineLearning
 ===================
 
-Lab Machine Learning in TU Berlin SS2014
+Lab Machine Learning at TU Berlin SS2014
